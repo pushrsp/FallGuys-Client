@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 // ReSharper disable All
 
 public class PlayerController : BaseController
@@ -10,15 +11,14 @@ public class PlayerController : BaseController
 
     public Define.State State
     {
-        get
-        { return _state; }
+        get { return _state; }
         set
         {
-            if(_state == value)
+            if (_state == value)
                 return;
 
             _state = value;
-            //TODO 에니메이션
+            UpdateAnimation();
         }
     }
 
@@ -26,8 +26,7 @@ public class PlayerController : BaseController
 
     public Vector3 MoveVec
     {
-        get
-        { return _dirVec; }
+        get { return _dirVec; }
         set
         {
             if (_dirVec.Equals(value))
@@ -73,15 +72,17 @@ public class PlayerController : BaseController
                 break;
         }
     }
-    
-    protected virtual void UpdateIdle() {}
+
+    protected virtual void UpdateIdle()
+    {
+    }
 
     protected virtual void UpdateMoving()
     {
         Vector3Int destPos = Vector3Int.RoundToInt(transform.position + MoveVec.normalized);
         Vector3 moveDir = destPos - transform.position;
         float dist = moveDir.magnitude;
-        
+
         if (dist < Speed * Time.deltaTime)
         {
             State = Define.State.Idle;
@@ -94,8 +95,27 @@ public class PlayerController : BaseController
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(look), 0.2f);
             transform.position += moveDir.normalized * Speed * Time.deltaTime;
         }
-        
+
         MoveVec = Vector3.zero;
     }
-    protected virtual void UpdateHit() {}
+
+    protected virtual void UpdateHit()
+    {
+    }
+
+    private void UpdateAnimation()
+    {
+        if (_anim == null)
+            return;
+
+        switch (State)
+        {
+            case Define.State.Idle:
+                _anim.SetFloat("Speed", 0.0f);
+                break;
+            case Define.State.Move:
+                _anim.SetFloat("Speed", Speed);
+                break;
+        }
+    }
 }
