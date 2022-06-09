@@ -11,4 +11,11 @@ public class Define
         Lobby,
         Game,
     }
+
+    public enum State
+    {
+        Idle,
+        Move,
+        Hit
+    }
 }
