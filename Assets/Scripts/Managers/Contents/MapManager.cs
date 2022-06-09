@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+// ReSharper disable All
+
 public class MapManager
 {
+    public Grid CurrentGrid { get; private set; }
+
     public int MinY { get; set; }
     public int MaxY { get; set; }
 
@@ -31,9 +35,10 @@ public class MapManager
 
         int y = pos.y - MinY;
         int z = MaxZ - pos.z;
-        int x = MaxX - pos.x;
+        int x = pos.x - MinX;
 
         Debug.Log($"({y}) ({z}) ({x})");
+        // Debug.Log(_collision[y, z, x]);
 
         switch (_collision[y, z, x])
         {
@@ -58,7 +63,8 @@ public class MapManager
     public void LoadStage(int mapId)
     {
         string stageName = "Stage_" + mapId.ToString("000");
-        // Managers.Resource.Instantiate($"Stages/{stageName}");
+        GameObject stage = Managers.Resource.Instantiate($"Stages/{stageName}");
+        stage.name = stageName;
 
         TextAsset txt = Managers.Resource.Load<TextAsset>($"StageData/{stageName}/{stageName}_Info");
         StringReader reader = new StringReader(txt.text);
@@ -75,6 +81,9 @@ public class MapManager
         YCount = MaxY - MinY + 1;
         ZCount = MaxZ - MinZ - 1;
         XCount = MaxX - MinX;
+
+        Transform info = Helper.FindChild<Transform>(stage, "Info");
+        CurrentGrid = info.GetComponent<Grid>();
 
         _collision = new char[YCount, ZCount, XCount];
         for (int y = 0; y < YCount; y++)

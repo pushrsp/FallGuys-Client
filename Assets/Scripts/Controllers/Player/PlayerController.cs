@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class PlayerController : BaseController
 {
+    protected Coroutine _coPunch;
+
     private Define.State _state = Define.State.Idle;
 
     public Define.State State
@@ -29,32 +31,47 @@ public class PlayerController : BaseController
         get { return _dirVec; }
         set
         {
-            if (_dirVec.Equals(value))
-            {
-                State = Define.State.Idle;
-                return;
-            }
-
-            _dirVec = Vector3Int.RoundToInt(value.normalized);
-            State = Define.State.Move;
+            _dirVec = value.normalized;
+            if (_dirVec != Vector3.zero)
+                State = Define.State.Move;
         }
     }
 
     private Animator _anim;
+    private Rigidbody _rigid;
+    private float _fallMultiplyer = 2.5f;
+    private float _lowJumpMultiplyer = 2.0f;
 
     void Start()
     {
         Init();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         UpdateController();
+        UpdateVelocity();
+    }
+
+    private void UpdateVelocity()
+    {
+        if (_rigid == null)
+            return;
+
+        if (_rigid.velocity.y < 0)
+        {
+            _rigid.velocity += Vector3.up * Physics.gravity.y * (_fallMultiplyer - 1) * Time.deltaTime;
+        }
+        else if (_rigid.velocity.y > 0)
+        {
+            _rigid.velocity += Vector3.up * Physics.gravity.y * (_lowJumpMultiplyer - 1) * Time.deltaTime;
+        }
     }
 
     protected virtual void Init()
     {
         _anim = GetComponent<Animator>();
+        _rigid = GetComponent<Rigidbody>();
     }
 
     protected virtual void UpdateController()
@@ -70,6 +87,9 @@ public class PlayerController : BaseController
             case Define.State.Hit:
                 UpdateHit();
                 break;
+            // case Define.State.Jump:
+            //     UpdateJump();
+            //     break;
         }
     }
 
@@ -79,21 +99,26 @@ public class PlayerController : BaseController
 
     protected virtual void UpdateMoving()
     {
-        Vector3Int destPos = Vector3Int.RoundToInt(transform.position + MoveVec.normalized);
+        Vector3 destPos = transform.position + MoveVec;
         Vector3 moveDir = destPos - transform.position;
         float dist = moveDir.magnitude;
 
-        if (dist < Speed * Time.deltaTime)
+        if (Managers.Map.CanGo(Vector3Int.RoundToInt(destPos)))
         {
-            State = Define.State.Idle;
-            transform.position = destPos;
-        }
-        else
-        {
-            Vector3 look = moveDir.normalized;
-            look.y = 0;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(look), 0.2f);
-            transform.position += moveDir.normalized * Speed * Time.deltaTime;
+            if (dist < Time.deltaTime * Speed)
+            {
+                transform.position = destPos;
+                State = Define.State.Idle;
+            }
+            else
+            {
+                Vector3 look = moveDir;
+                look.y = 0;
+                transform.position += moveDir.normalized * Speed * Time.deltaTime;
+
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(look),
+                    Time.deltaTime * Speed);
+            }
         }
 
         MoveVec = Vector3.zero;
@@ -101,6 +126,29 @@ public class PlayerController : BaseController
 
     protected virtual void UpdateHit()
     {
+    }
+
+    private bool _doJump;
+
+    protected virtual void UpdateJump()
+    {
+        if (!_doJump)
+        {
+            _rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            _doJump = true;
+        }
+
+        UpdateMoving();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Road":
+                _doJump = false;
+                break;
+        }
     }
 
     private void UpdateAnimation()
@@ -111,10 +159,10 @@ public class PlayerController : BaseController
         switch (State)
         {
             case Define.State.Idle:
-                _anim.SetFloat("Speed", 0.0f);
+                _anim.SetFloat("speed", 0.0f);
                 break;
             case Define.State.Move:
-                _anim.SetFloat("Speed", Speed);
+                _anim.SetFloat("speed", Speed);
                 break;
         }
     }

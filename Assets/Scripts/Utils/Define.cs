@@ -16,6 +16,7 @@ public class Define
     {
         Idle,
         Move,
-        Hit
+        Hit,
+        Jump
     }
 }
