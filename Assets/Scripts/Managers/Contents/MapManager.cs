@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class MapManager
 {
-    public Grid CurrentGrid { get; private set; }
-
     public int MinY { get; set; }
     public int MaxY { get; set; }
 
@@ -78,9 +76,6 @@ public class MapManager
         YCount = MaxY - MinY + 1;
         ZCount = MaxZ - MinZ - 1;
         XCount = MaxX - MinX;
-
-        Transform info = Helper.FindChild<Transform>(stage, "Info");
-        CurrentGrid = info.GetComponent<Grid>();
 
         _collision = new char[YCount, ZCount, XCount];
         for (int y = 0; y < YCount; y++)

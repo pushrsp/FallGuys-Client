@@ -10,6 +10,12 @@ public class Map
     [MenuItem("Tools/GenerateMap")]
     public static void GenerateMap()
     {
+        GenerateMap("Assets/Resources/StageData");
+        GenerateMap("../Shared/StageData");
+    }
+
+    private static void GenerateMap(string pathPrefix)
+    {
         GameObject stage = Resources.Load<GameObject>("Prefabs/Stages/Stage_001");
         Transform info = Helper.FindChild<Transform>(stage, "Info");
         List<Tilemap> collisions = Helper.FindChildren<Tilemap>(info.gameObject, "Collision");
@@ -19,8 +25,8 @@ public class Map
         int xMax = collisions[0].cellBounds.xMax;
         int xMin = collisions[0].cellBounds.xMin;
 
-        Directory.CreateDirectory($"Assets/Resources/StageData/{stage.name}");
-        using (StreamWriter writer = File.CreateText($"Assets/Resources/StageData/{stage.name}/{stage.name}_Info.txt"))
+        Directory.CreateDirectory($"{pathPrefix}/{stage.name}");
+        using (StreamWriter writer = File.CreateText($"{pathPrefix}/{stage.name}/{stage.name}_Info.txt"))
         {
             writer.WriteLine(0);
             writer.WriteLine(collisions.Count - 1);
@@ -35,7 +41,7 @@ public class Map
         for (int y = 0; y < collisions.Count; y++)
         {
             using (StreamWriter writer =
-                   File.CreateText($"Assets/Resources/StageData/{stage.name}/{stage.name}_Collision_{y}.txt"))
+                   File.CreateText($"{pathPrefix}/{stage.name}/{stage.name}_Collision_{y}.txt"))
             {
                 for (int z = zMax - 1; z > zMin; z--)
                 {
@@ -69,6 +75,10 @@ public class Map
                             //회전 장애물
                             case "chest":
                                 writer.Write('7');
+                                break;
+                            //출발 리스폰 지역
+                            case "tileset_70":
+                                writer.Write('8');
                                 break;
                         }
                     }

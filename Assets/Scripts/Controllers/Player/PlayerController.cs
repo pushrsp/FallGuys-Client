@@ -153,6 +153,23 @@ public class PlayerController : BaseController
                 _anim.SetBool("isJump", false);
                 break;
         }
+
+        switch (LayerMask.LayerToName(collision.gameObject.layer))
+        {
+            case "Wheel":
+                transform.SetParent(collision.transform);
+                break;
+        }
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        switch (LayerMask.LayerToName(other.gameObject.layer))
+        {
+            case "Wheel":
+                transform.SetParent(null);
+                break;
+        }
     }
 
     private void UpdateAnimation()

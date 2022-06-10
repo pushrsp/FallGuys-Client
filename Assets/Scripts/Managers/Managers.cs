@@ -19,6 +19,7 @@ public class Managers : MonoBehaviour
 
     private MapManager _map = new MapManager();
     private NetworkManager _network = new NetworkManager();
+    private ObjectManager _object = new ObjectManager();
 
     public static MapManager Map
     {
@@ -30,11 +31,17 @@ public class Managers : MonoBehaviour
         get => Instance._network;
     }
 
+    public static ObjectManager Object
+    {
+        get => Instance._object;
+    }
+
     #endregion
 
     #region Core
 
     private ResourceManager _resource = new ResourceManager();
+
 
     public static ResourceManager Resource
     {
