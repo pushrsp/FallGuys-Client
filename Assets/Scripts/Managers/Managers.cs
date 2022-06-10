@@ -18,10 +18,16 @@ public class Managers : MonoBehaviour
     #region Contents
 
     private MapManager _map = new MapManager();
+    private NetworkManager _network = new NetworkManager();
 
     public static MapManager Map
     {
         get => Instance._map;
+    }
+
+    public static NetworkManager Network
+    {
+        get => Instance._network;
     }
 
     #endregion
@@ -49,6 +55,13 @@ public class Managers : MonoBehaviour
             }
 
             DontDestroyOnLoad(go);
+
+            _instance._network.Init();
         }
+    }
+
+    void Update()
+    {
+        _network.Update();
     }
 }
