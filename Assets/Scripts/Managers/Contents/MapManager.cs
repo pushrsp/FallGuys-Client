@@ -37,9 +37,6 @@ public class MapManager
         int z = MaxZ - pos.z;
         int x = pos.x - MinX;
 
-        Debug.Log($"({y}) ({z}) ({x})");
-        // Debug.Log(_collision[y, z, x]);
-
         switch (_collision[y, z, x])
         {
             case '0':

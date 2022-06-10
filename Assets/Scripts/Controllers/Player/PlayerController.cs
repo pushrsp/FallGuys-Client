@@ -32,13 +32,13 @@ public class PlayerController : BaseController
         set
         {
             _dirVec = value.normalized;
-            if (_dirVec != Vector3.zero)
+            if (_dirVec != Vector3.zero && State != Define.State.Jump)
                 State = Define.State.Move;
         }
     }
 
-    private Animator _anim;
-    private Rigidbody _rigid;
+    protected Animator _anim;
+    protected Rigidbody _rigid;
     private float _fallMultiplyer = 2.5f;
     private float _lowJumpMultiplyer = 2.0f;
 
@@ -87,9 +87,9 @@ public class PlayerController : BaseController
             case Define.State.Hit:
                 UpdateHit();
                 break;
-            // case Define.State.Jump:
-            //     UpdateJump();
-            //     break;
+            case Define.State.Jump:
+                UpdateJump();
+                break;
         }
     }
 
@@ -99,7 +99,8 @@ public class PlayerController : BaseController
 
     protected virtual void UpdateMoving()
     {
-        Vector3 destPos = transform.position + MoveVec;
+        Vector3 moveVec = MoveVec;
+        Vector3 destPos = transform.position + moveVec;
         Vector3 moveDir = destPos - transform.position;
         float dist = moveDir.magnitude;
 
@@ -134,19 +135,22 @@ public class PlayerController : BaseController
     {
         if (!_doJump)
         {
-            _rigid.AddForce(Vector3.up * 5, ForceMode.Impulse);
             _doJump = true;
+            _rigid.AddForce(Vector3.up * 9, ForceMode.Impulse);
         }
 
         UpdateMoving();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
         switch (collision.gameObject.tag)
         {
-            case "Road":
+            case "Terrain":
                 _doJump = false;
+                if (_anim.GetBool("isJump"))
+                    State = Define.State.Idle;
+                _anim.SetBool("isJump", false);
                 break;
         }
     }
@@ -163,6 +167,10 @@ public class PlayerController : BaseController
                 break;
             case Define.State.Move:
                 _anim.SetFloat("speed", Speed);
+                break;
+            case Define.State.Jump:
+                _anim.SetTrigger("doJump");
+                _anim.SetBool("isJump", true);
                 break;
         }
     }

@@ -29,34 +29,49 @@ public class MyPlayerController : PlayerController
             case Define.State.Move:
                 UpdateKeyboard();
                 break;
+            case Define.State.Jump:
+                UpdateKeyboard();
+                break;
         }
 
         base.UpdateController();
     }
+
+    private bool _isJump;
 
     private void UpdateKeyboard()
     {
         if (Input.anyKey == false)
             return;
 
-        Vector3 _moveVec = Vector3.zero;
         if (Input.GetKey(KeyCode.UpArrow))
-            _moveVec += Vector3.forward;
-
+            MoveVec += Vector3.forward;
 
         if (Input.GetKey(KeyCode.DownArrow))
-            _moveVec += Vector3.back;
-
+            MoveVec += Vector3.back;
 
         if (Input.GetKey(KeyCode.LeftArrow))
-            _moveVec += Vector3.left;
-
+            MoveVec += Vector3.left;
 
         if (Input.GetKey(KeyCode.RightArrow))
-            _moveVec += Vector3.right;
+            MoveVec += Vector3.right;
 
+        if (!_isJump && Input.GetKey(KeyCode.Space))
+        {
+            _isJump = true;
+            State = Define.State.Jump;
+        }
+    }
 
-        if (_moveVec != Vector3.zero)
-            MoveVec = _moveVec;
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Terrain":
+                _isJump = false;
+                break;
+        }
+
+        base.OnCollisionEnter(collision);
     }
 }
