@@ -1,39 +1,86 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Protocol;
 using UnityEngine;
 
 // ReSharper disable All
 
 public class PlayerController : BaseController
 {
-    protected Coroutine _coPunch;
+    private PlayerInfo _playerInfo = new PlayerInfo {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
 
-    private Define.State _state = Define.State.Idle;
-
-    public Define.State State
+    public PlayerInfo Info
     {
-        get { return _state; }
+        get { return _playerInfo; }
+        set { _playerInfo = value; }
+    }
+
+    public int Id
+    {
+        get { return Info.ObjectId; }
+        set { Info.ObjectId = value; }
+    }
+
+    public string Name
+    {
+        get { return Info.Name; }
+        set { Info.Name = value; }
+    }
+
+    public int PlayerSelect
+    {
+        get { return Info.PlayerSelect; }
+        set { Info.PlayerSelect = value; }
+    }
+
+    public Vector3 PosInfo
+    {
+        get { return new Vector3(Info.PosInfo.PosX, Info.PosInfo.PosY, Info.PosInfo.PosZ); }
         set
         {
-            if (_state == value)
+            if (Info.PosInfo.PosX == value.x &&
+                Info.PosInfo.PosY == value.y &&
+                Info.PosInfo.PosZ == value.z)
                 return;
 
-            _state = value;
+            Info.PosInfo.PosX = value.x;
+            Info.PosInfo.PosY = value.y;
+            Info.PosInfo.PosZ = value.z;
+        }
+    }
+
+    public PlayerState State
+    {
+        get { return Info.State; }
+        set
+        {
+            if (Info.State == value)
+                return;
+
+            Info.State = value;
             UpdateAnimation();
         }
     }
 
-    private Vector3 _dirVec = Vector3.zero;
-
-    public Vector3 MoveVec
+    public Vector3 MoveDir
     {
-        get { return _dirVec; }
+        get { return new Vector3(Info.MoveDir.PosX, Info.MoveDir.PosY, Info.MoveDir.PosZ); }
         set
         {
-            _dirVec = value.normalized;
-            if (_dirVec != Vector3.zero && State != Define.State.Jump)
-                State = Define.State.Move;
+            Info.MoveDir.PosX = value.x;
+            Info.MoveDir.PosY = value.y;
+            Info.MoveDir.PosZ = value.z;
+
+            if (value != Vector3.zero)
+            {
+                if (State != PlayerState.Jump)
+                    State = PlayerState.Move;
+            }
+            else
+            {
+                State = PlayerState.Idle;
+            }
         }
     }
 
@@ -45,12 +92,19 @@ public class PlayerController : BaseController
     void Start()
     {
         Init();
+        SyncPos();
     }
 
     void FixedUpdate()
     {
         UpdateController();
         UpdateVelocity();
+    }
+
+    public void SyncPos()
+    {
+        PosInfo = new Vector3Int(-7, 0, -260);
+        // transform.position = new Vector3(PosInfo.PosX, PosInfo.PosY, PosInfo.PosZ);
     }
 
     private void UpdateVelocity()
@@ -78,16 +132,16 @@ public class PlayerController : BaseController
     {
         switch (State)
         {
-            case Define.State.Idle:
+            case PlayerState.Idle:
                 UpdateIdle();
                 break;
-            case Define.State.Move:
+            case PlayerState.Move:
                 UpdateMoving();
                 break;
-            case Define.State.Hit:
+            case PlayerState.Hit:
                 UpdateHit();
                 break;
-            case Define.State.Jump:
+            case PlayerState.Jump:
                 UpdateJump();
                 break;
         }
@@ -99,30 +153,37 @@ public class PlayerController : BaseController
 
     protected virtual void UpdateMoving()
     {
-        Vector3 moveVec = MoveVec;
-        Vector3 destPos = transform.position + moveVec;
-        Vector3 moveDir = destPos - transform.position;
-        float dist = moveDir.magnitude;
+        Vector3 moveVec = MoveDir;
+        if (moveVec == Vector3.zero)
+            return;
 
-        if (Managers.Map.CanGo(Vector3Int.RoundToInt(destPos)))
-        {
-            if (dist < Time.deltaTime * Speed)
-            {
-                transform.position = destPos;
-                State = Define.State.Idle;
-            }
-            else
-            {
-                Vector3 look = moveDir;
-                look.y = 0;
-                transform.position += moveDir.normalized * Speed * Time.deltaTime;
+        Vector3 destPos = PosInfo;
+        Vector3 dir = destPos - transform.position;
+        float dist = dir.magnitude;
 
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(look),
-                    Time.deltaTime * Speed);
-            }
-        }
+        transform.position += moveVec * Speed * Time.deltaTime;
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            Quaternion.LookRotation(new Vector3(moveVec.x, 0, moveVec.z)),
+            Time.deltaTime * Speed
+        );
 
-        MoveVec = Vector3.zero;
+        // Debug.Log(moveVec);
+        // if (dist < Speed * Time.deltaTime)
+        // {
+        //     transform.position = destPos;
+        //     State = PlayerState.Idle;
+        // }
+        // else
+        // {
+        //     transform.position += moveVec * Speed * Time.deltaTime;
+        //     if (moveVec != Vector3.zero)
+        //         transform.rotation = Quaternion.Slerp(
+        //             transform.rotation,
+        //             Quaternion.LookRotation(new Vector3(moveVec.x, 0, moveVec.z)),
+        //             Time.deltaTime * Speed
+        //         );
+        // }
     }
 
     protected virtual void UpdateHit()
@@ -149,7 +210,7 @@ public class PlayerController : BaseController
             case "Terrain":
                 _doJump = false;
                 if (_anim.GetBool("isJump"))
-                    State = Define.State.Idle;
+                    State = PlayerState.Idle;
                 _anim.SetBool("isJump", false);
                 break;
         }
@@ -179,13 +240,13 @@ public class PlayerController : BaseController
 
         switch (State)
         {
-            case Define.State.Idle:
+            case PlayerState.Idle:
                 _anim.SetFloat("speed", 0.0f);
                 break;
-            case Define.State.Move:
+            case PlayerState.Move:
                 _anim.SetFloat("speed", Speed);
                 break;
-            case Define.State.Jump:
+            case PlayerState.Jump:
                 _anim.SetTrigger("doJump");
                 _anim.SetBool("isJump", true);
                 break;

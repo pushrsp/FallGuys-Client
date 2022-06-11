@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Protocol;
 using UnityEngine;
 
 // ReSharper disable All
@@ -23,13 +24,13 @@ public class MyPlayerController : PlayerController
     {
         switch (State)
         {
-            case Define.State.Idle:
+            case PlayerState.Idle:
                 UpdateKeyboard();
                 break;
-            case Define.State.Move:
+            case PlayerState.Move:
                 UpdateKeyboard();
                 break;
-            case Define.State.Jump:
+            case PlayerState.Jump:
                 UpdateKeyboard();
                 break;
         }
@@ -39,28 +40,40 @@ public class MyPlayerController : PlayerController
 
     private bool _isJump;
 
+
     private void UpdateKeyboard()
     {
-        if (Input.anyKey == false)
-            return;
+        Vector3 moveDir = Vector3.zero;
 
         if (Input.GetKey(KeyCode.UpArrow))
-            MoveVec += Vector3.forward;
+            moveDir += Vector3.forward;
 
         if (Input.GetKey(KeyCode.DownArrow))
-            MoveVec += Vector3.back;
+            moveDir += Vector3.back;
 
         if (Input.GetKey(KeyCode.LeftArrow))
-            MoveVec += Vector3.left;
+            moveDir += Vector3.left;
 
         if (Input.GetKey(KeyCode.RightArrow))
-            MoveVec += Vector3.right;
+            moveDir += Vector3.right;
 
         if (!_isJump && Input.GetKey(KeyCode.Space))
         {
             _isJump = true;
-            State = Define.State.Jump;
+            State = PlayerState.Jump;
         }
+
+        MoveDir = moveDir.normalized;
+    }
+
+    protected override void UpdateMoving()
+    {
+        Vector3Int destPos = Vector3Int.RoundToInt(transform.position + MoveDir);
+        if (!Managers.Map.CanGo(destPos))
+            return;
+
+        PosInfo = destPos;
+        base.UpdateMoving();
     }
 
     protected override void OnCollisionEnter(Collision collision)

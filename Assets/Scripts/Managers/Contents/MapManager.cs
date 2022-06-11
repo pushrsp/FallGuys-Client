@@ -49,6 +49,8 @@ public class MapManager
                 return true;
             case '7':
                 return true;
+            case '8':
+                return true;
             default:
                 return false;
         }
