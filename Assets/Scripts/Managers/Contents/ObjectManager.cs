@@ -13,18 +13,30 @@ public class ObjectManager
     {
         GameObject go = Managers.Resource.Instantiate($"Players/{info.PlayerSelect}");
         go.name = info.Name;
+        _objects.Add(info.ObjectId, go);
 
         if (me)
         {
-            MyPlayerController mc = go.GetOrAddComponent<MyPlayerController>();
-            mc.Info = info;
-            Debug.Log($"({info.PosInfo.PosY}, {info.PosInfo.PosZ}, {info.PosInfo.PosX})");
-            mc.SyncPos();
+            Me = go.GetOrAddComponent<MyPlayerController>();
+            Me.Speed = info.Speed;
+            Me.Info = info;
+            Me.SyncPos();
         }
         else
         {
             PlayerController pc = go.GetOrAddComponent<PlayerController>();
+            pc.Speed = info.Speed;
             pc.Info = info;
+            pc.SyncPos();
         }
+    }
+
+    public GameObject FindById(int objectId)
+    {
+        GameObject go;
+        if (_objects.TryGetValue(objectId, out go) == false)
+            return null;
+
+        return go;
     }
 }

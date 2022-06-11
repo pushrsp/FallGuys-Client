@@ -103,8 +103,8 @@ public class PlayerController : BaseController
 
     public void SyncPos()
     {
-        PosInfo = new Vector3Int(-7, 0, -260);
-        // transform.position = new Vector3(PosInfo.PosX, PosInfo.PosY, PosInfo.PosZ);
+        // PosInfo = new Vector3Int(-7, 0, -260);
+        transform.position = PosInfo;
     }
 
     private void UpdateVelocity()
@@ -153,37 +153,16 @@ public class PlayerController : BaseController
 
     protected virtual void UpdateMoving()
     {
-        Vector3 moveVec = MoveDir;
-        if (moveVec == Vector3.zero)
-            return;
-
         Vector3 destPos = PosInfo;
         Vector3 dir = destPos - transform.position;
         float dist = dir.magnitude;
 
-        transform.position += moveVec * Speed * Time.deltaTime;
+        transform.position += MoveDir * Speed * Time.deltaTime;
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
-            Quaternion.LookRotation(new Vector3(moveVec.x, 0, moveVec.z)),
+            Quaternion.LookRotation(new Vector3(MoveDir.x, 0, MoveDir.z)),
             Time.deltaTime * Speed
         );
-
-        // Debug.Log(moveVec);
-        // if (dist < Speed * Time.deltaTime)
-        // {
-        //     transform.position = destPos;
-        //     State = PlayerState.Idle;
-        // }
-        // else
-        // {
-        //     transform.position += moveVec * Speed * Time.deltaTime;
-        //     if (moveVec != Vector3.zero)
-        //         transform.rotation = Quaternion.Slerp(
-        //             transform.rotation,
-        //             Quaternion.LookRotation(new Vector3(moveVec.x, 0, moveVec.z)),
-        //             Time.deltaTime * Speed
-        //         );
-        // }
     }
 
     protected virtual void UpdateHit()
@@ -198,6 +177,7 @@ public class PlayerController : BaseController
         {
             _doJump = true;
             _rigid.AddForce(Vector3.up * 9, ForceMode.Impulse);
+            //TODO
         }
 
         UpdateMoving();

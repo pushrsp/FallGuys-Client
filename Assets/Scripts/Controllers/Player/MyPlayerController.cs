@@ -66,11 +66,42 @@ public class MyPlayerController : PlayerController
         MoveDir = moveDir.normalized;
     }
 
+    private bool _sendIdle;
+
+    private void SendMove(Vector3Int destPos, Vector3 moveVec)
+    {
+        C_Move movePacket = new C_Move {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
+
+        movePacket.PosInfo.PosY = destPos.y;
+        movePacket.PosInfo.PosZ = destPos.z;
+        movePacket.PosInfo.PosX = destPos.x;
+
+        movePacket.MoveDir.PosY = moveVec.y;
+        movePacket.MoveDir.PosZ = moveVec.z;
+        movePacket.MoveDir.PosX = moveVec.x;
+
+        movePacket.State = State;
+
+        Managers.Network.Send(movePacket);
+    }
+
+    protected override void UpdateIdle()
+    {
+        if (_sendIdle)
+        {
+            SendMove(Vector3Int.RoundToInt(transform.position), Vector3.zero);
+            _sendIdle = false;
+        }
+    }
+
     protected override void UpdateMoving()
     {
         Vector3Int destPos = Vector3Int.RoundToInt(transform.position + MoveDir);
         if (!Managers.Map.CanGo(destPos))
             return;
+
+        SendMove(destPos, MoveDir);
+        _sendIdle = true;
 
         PosInfo = destPos;
         base.UpdateMoving();

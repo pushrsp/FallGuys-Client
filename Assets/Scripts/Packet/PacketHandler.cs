@@ -21,7 +21,10 @@ public class PacketHandler
 
     public static void S_SpawnHandler(PacketSession session, IMessage packet)
     {
-        S_EnterGame enterPacket = packet as S_EnterGame;
+        S_Spawn spawnPacket = packet as S_Spawn;
+
+        foreach (PlayerInfo p in spawnPacket.PlayerInfo)
+            Managers.Object.Add(p);
     }
 
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
@@ -31,6 +34,22 @@ public class PacketHandler
 
     public static void S_MoveHandler(PacketSession session, IMessage packet)
     {
-        S_EnterGame enterPacket = packet as S_EnterGame;
+        S_Move movePacket = packet as S_Move;
+
+        if (Managers.Object.Me.Id == movePacket.PlayerInfo.ObjectId)
+            return;
+
+        GameObject go = Managers.Object.FindById(movePacket.PlayerInfo.ObjectId);
+        if (go == null)
+            return;
+
+        PlayerController pc = go.GetComponent<PlayerController>();
+        {
+            PlayerInfo info = movePacket.PlayerInfo;
+            pc.State = info.State;
+            pc.Speed = info.Speed;
+            pc.PosInfo = new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ);
+            pc.MoveDir = new Vector3(info.MoveDir.PosX, info.MoveDir.PosY, info.MoveDir.PosZ);
+        }
     }
 }
