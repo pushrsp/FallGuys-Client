@@ -4,4 +4,9 @@ using UnityEngine;
 
 public class ObstacleController : BaseController
 {
+    protected enum Dir
+    {
+        Left,
+        Right
+    }
 }

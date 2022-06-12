@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// ReSharper disable All
+
 public class WheelController : ObstacleController
 {
-    enum Dir
-    {
-        Left,
-        Right
-    }
-
     [SerializeField] private Dir _dir;
 
     private int x = 1;
+
     void Start()
     {
         switch (_dir)
@@ -26,8 +23,9 @@ public class WheelController : ObstacleController
         }
     }
 
+
     void Update()
     {
-        transform.Rotate(new Vector3(0,(100 * x) * Time.deltaTime,0));
+        transform.Rotate(new Vector3(0, (100 * x) * Time.deltaTime, 0));
     }
 }
