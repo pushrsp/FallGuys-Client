@@ -43,6 +43,9 @@ public class MyPlayerController : PlayerController
 
     private void UpdateKeyboard()
     {
+        if (Input.anyKey == false)
+            return;
+
         Vector3 moveDir = Vector3.zero;
 
         if (Input.GetKey(KeyCode.UpArrow))

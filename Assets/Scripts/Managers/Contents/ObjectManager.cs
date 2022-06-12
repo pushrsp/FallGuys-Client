@@ -39,4 +39,14 @@ public class ObjectManager
 
         return go;
     }
+
+    public void Remove(int objectId)
+    {
+        GameObject go = FindById(objectId);
+        if (go == null)
+            return;
+
+        _objects.Remove(objectId);
+        Managers.Resource.Destroy(go);
+    }
 }

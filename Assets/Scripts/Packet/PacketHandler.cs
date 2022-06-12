@@ -29,7 +29,10 @@ public class PacketHandler
 
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
     {
-        S_EnterGame enterPacket = packet as S_EnterGame;
+        S_Despawn despawn = packet as S_Despawn;
+
+        foreach (int objectId in despawn.PlayerId)
+            Managers.Object.Remove(objectId);
     }
 
     public static void S_MoveHandler(PacketSession session, IMessage packet)
