@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Google.Protobuf.Protocol;
 using UnityEngine;
 
 // ReSharper disable All
@@ -22,7 +23,28 @@ public class MapManager
 
     private char[,,] _collision;
 
-    public bool CanGo(Vector3Int pos)
+    public bool CanGo(Vector3 pos, int objectId)
+    {
+        foreach (GameObject go in Managers.Object._objects.Values)
+        {
+            PlayerController pc = go.GetComponent<PlayerController>();
+
+            if (pc.Id == objectId)
+                continue;
+
+            float distY = pos.y - pc.PosInfo.y;
+            float distZ = pos.z - pc.PosInfo.z;
+            float distX = pos.x - pc.PosInfo.x;
+            float dist = Mathf.Abs(distY * distY + distZ * distZ + distX * distX);
+
+            if (dist < 1.0f)
+                return false;
+        }
+
+        return CanGo(Vector3Int.RoundToInt(pos));
+    }
+
+    private bool CanGo(Vector3Int pos)
     {
         if (pos.x < MinX || pos.x > MaxX)
             return false;

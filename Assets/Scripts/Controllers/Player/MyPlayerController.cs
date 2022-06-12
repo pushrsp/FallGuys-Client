@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Google.Protobuf.Protocol;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 public class MyPlayerController : PlayerController
 {
-    private Vector3 _delta;
+    [SerializeField] private Vector3 _delta = new Vector3(0.0f, 5.0f, -5.0f);
 
     void LateUpdate()
     {
@@ -16,7 +17,7 @@ public class MyPlayerController : PlayerController
 
     protected override void Init()
     {
-        _delta = Camera.main.transform.position - transform.position;
+        // _delta = Camera.main.transform.position - transform.position;
         base.Init();
     }
 
@@ -40,12 +41,8 @@ public class MyPlayerController : PlayerController
 
     private bool _isJump;
 
-
     private void UpdateKeyboard()
     {
-        if (Input.anyKey == false)
-            return;
-
         Vector3 moveDir = Vector3.zero;
 
         if (Input.GetKey(KeyCode.UpArrow))
@@ -62,6 +59,7 @@ public class MyPlayerController : PlayerController
 
         if (!_isJump && Input.GetKey(KeyCode.Space))
         {
+            moveDir += Vector3.up;
             _isJump = true;
             State = PlayerState.Jump;
         }
@@ -71,7 +69,7 @@ public class MyPlayerController : PlayerController
 
     private bool _sendIdle;
 
-    private void SendMove(Vector3Int destPos, Vector3 moveVec)
+    protected override void SendMove(Vector3 destPos, Vector3 moveVec)
     {
         C_Move movePacket = new C_Move {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
 
@@ -92,22 +90,35 @@ public class MyPlayerController : PlayerController
     {
         if (_sendIdle)
         {
-            SendMove(Vector3Int.RoundToInt(transform.position), Vector3.zero);
+            SendMove(transform.position, Vector3.zero);
             _sendIdle = false;
         }
     }
 
     protected override void UpdateMoving()
     {
-        Vector3Int destPos = Vector3Int.RoundToInt(transform.position + MoveDir);
-        if (!Managers.Map.CanGo(destPos))
+        Vector3 destPos = transform.position + MoveDir;
+        if (!Managers.Map.CanGo(destPos, Id))
             return;
 
         SendMove(destPos, MoveDir);
         _sendIdle = true;
 
         PosInfo = destPos;
-        base.UpdateMoving();
+
+        Vector3 moveDir = destPos - transform.position;
+        Vector3 dir = moveDir.normalized;
+
+        transform.position += dir * Speed * Time.deltaTime;
+
+        if (MoveDir.x == 0 && MoveDir.z == 0)
+            return;
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            Quaternion.LookRotation(new Vector3(MoveDir.x, 0, MoveDir.z)),
+            Time.deltaTime * Speed
+        );
     }
 
     protected override void OnCollisionEnter(Collision collision)
@@ -120,5 +131,16 @@ public class MyPlayerController : PlayerController
         }
 
         base.OnCollisionEnter(collision);
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        switch (LayerMask.LayerToName(collision.gameObject.layer))
+        {
+            case "Wheel":
+                if (MoveDir == Vector3.zero)
+                    SendMove(transform.position, Vector3.zero);
+                break;
+        }
     }
 }

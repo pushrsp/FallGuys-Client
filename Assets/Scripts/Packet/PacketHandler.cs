@@ -55,4 +55,8 @@ public class PacketHandler
             pc.MoveDir = new Vector3(info.MoveDir.PosX, info.MoveDir.PosY, info.MoveDir.PosZ);
         }
     }
+
+    public static void S_HitByPlayerHandler(PacketSession session, IMessage packet)
+    {
+    }
 }

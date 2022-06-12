@@ -7,7 +7,7 @@ public class ObjectManager
 {
     public MyPlayerController Me { get; set; }
 
-    private Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
+    public Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
 
     public void Add(PlayerInfo info, bool me = false)
     {

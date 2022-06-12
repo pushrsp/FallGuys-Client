@@ -84,7 +84,7 @@ public class PlayerController : BaseController
         }
     }
 
-    protected Animator _anim;
+    public Animator Anim { get; set; }
     protected Rigidbody _rigid;
     private float _fallMultiplyer = 2.5f;
     private float _lowJumpMultiplyer = 2.0f;
@@ -92,7 +92,6 @@ public class PlayerController : BaseController
     void Start()
     {
         Init();
-        SyncPos();
     }
 
     void FixedUpdate()
@@ -103,7 +102,6 @@ public class PlayerController : BaseController
 
     public void SyncPos()
     {
-        // PosInfo = new Vector3Int(-7, 0, -260);
         transform.position = PosInfo;
     }
 
@@ -124,7 +122,7 @@ public class PlayerController : BaseController
 
     protected virtual void Init()
     {
-        _anim = GetComponent<Animator>();
+        Anim = GetComponent<Animator>();
         _rigid = GetComponent<Rigidbody>();
     }
 
@@ -154,10 +152,17 @@ public class PlayerController : BaseController
     protected virtual void UpdateMoving()
     {
         Vector3 destPos = PosInfo;
-        Vector3 dir = destPos - transform.position;
-        float dist = dir.magnitude;
+        Vector3 moveDir = destPos - transform.position;
+        Vector3 dir = moveDir.normalized;
 
-        transform.position += MoveDir * Speed * Time.deltaTime;
+        if (!Managers.Map.CanGo(destPos, Id))
+            return;
+
+        transform.position += dir * Speed * Time.deltaTime;
+
+        if (MoveDir.x == 0 && MoveDir.z == 0)
+            return;
+
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
             Quaternion.LookRotation(new Vector3(MoveDir.x, 0, MoveDir.z)),
@@ -171,13 +176,16 @@ public class PlayerController : BaseController
 
     private bool _doJump;
 
+    protected virtual void SendMove(Vector3 destPos, Vector3 moveVec)
+    {
+    }
+
     protected virtual void UpdateJump()
     {
         if (!_doJump)
         {
             _doJump = true;
             _rigid.AddForce(Vector3.up * 9, ForceMode.Impulse);
-            //TODO
         }
 
         UpdateMoving();
@@ -189,9 +197,9 @@ public class PlayerController : BaseController
         {
             case "Terrain":
                 _doJump = false;
-                if (_anim.GetBool("isJump"))
+                if (Anim.GetBool("isJump"))
                     State = PlayerState.Idle;
-                _anim.SetBool("isJump", false);
+                Anim.SetBool("isJump", false);
                 break;
         }
 
@@ -215,20 +223,20 @@ public class PlayerController : BaseController
 
     private void UpdateAnimation()
     {
-        if (_anim == null)
+        if (Anim == null)
             return;
 
         switch (State)
         {
             case PlayerState.Idle:
-                _anim.SetFloat("speed", 0.0f);
+                Anim.SetFloat("speed", 0.0f);
                 break;
             case PlayerState.Move:
-                _anim.SetFloat("speed", Speed);
+                Anim.SetFloat("speed", Speed);
                 break;
             case PlayerState.Jump:
-                _anim.SetTrigger("doJump");
-                _anim.SetBool("isJump", true);
+                Anim.SetTrigger("doJump");
+                Anim.SetBool("isJump", true);
                 break;
         }
     }
