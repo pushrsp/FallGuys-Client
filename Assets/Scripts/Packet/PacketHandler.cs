@@ -59,5 +59,6 @@ public class PacketHandler
     public static void S_RotateObsHandler(PacketSession session, IMessage packet)
     {
         S_RotateObs rotateObsPacket = packet as S_RotateObs;
+        Managers.Object.SetRotatePosY(rotateObsPacket.Y);
     }
 }

@@ -79,7 +79,7 @@ public class MapManager
     }
 
 
-    public void LoadStage(int mapId)
+    public GameObject LoadStage(int mapId)
     {
         string stageName = "Stage_" + mapId.ToString("000");
         GameObject stage = Managers.Resource.Instantiate($"Stages/{stageName}");
@@ -117,5 +117,7 @@ public class MapManager
                 }
             }
         }
+
+        return stage;
     }
 }

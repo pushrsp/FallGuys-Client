@@ -141,6 +141,10 @@ public class MyPlayerController : PlayerController
                 if (MoveDir == Vector3.zero)
                     SendMove(transform.position, Vector3.zero);
                 break;
+            case "RotateObs":
+                if (MoveDir == Vector3.zero)
+                    SendMove(transform.position, Vector3.zero);
+                break;
         }
     }
 }

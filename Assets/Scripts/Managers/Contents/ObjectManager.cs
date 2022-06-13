@@ -8,6 +8,7 @@ public class ObjectManager
     public MyPlayerController Me { get; set; }
 
     public Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
+    public List<RotateBarController> _rotateObs = new List<RotateBarController>();
 
     public void Add(PlayerInfo info, bool me = false)
     {
@@ -38,6 +39,12 @@ public class ObjectManager
             return null;
 
         return go;
+    }
+
+    public void SetRotatePosY(float y)
+    {
+        foreach (RotateBarController ro in _rotateObs)
+            ro.YPos = y;
     }
 
     public void Remove(int objectId)
