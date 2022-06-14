@@ -57,6 +57,8 @@ public class MapManager
         int z = MaxZ - pos.z;
         int x = pos.x - MinX;
 
+        // Debug.Log($"ROUND: ({y}, {z}, {x})");
+
         switch (_collision[y, z, x])
         {
             case '0':
@@ -72,6 +74,10 @@ public class MapManager
             case '7':
                 return true;
             case '8':
+                return true;
+            case 'a':
+                return true;
+            case 'b':
                 return true;
             default:
                 return false;

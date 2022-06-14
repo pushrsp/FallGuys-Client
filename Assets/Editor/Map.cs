@@ -84,6 +84,14 @@ public class Map
                             case "tileset_70":
                                 writer.Write('8');
                                 break;
+                            //회전 휠 장애물
+                            case "tileset_73":
+                                writer.Write('a');
+                                break;
+                            //회전 휠 장애물 pivot
+                            case "tileset_9":
+                                writer.Write('b');
+                                break;
                         }
                     }
 

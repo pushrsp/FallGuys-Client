@@ -149,23 +149,30 @@ public class PlayerController : BaseController
     {
     }
 
+    protected virtual void Move(Vector3 position, Vector3 moveDir)
+    {
+    }
+
     protected virtual void UpdateMoving()
     {
-        Vector3 destPos = PosInfo;
-        Vector3 moveDir = destPos - transform.position;
-        Vector3 dir = moveDir.normalized;
-
+        Vector3 moveDir = MoveDir;
+        Debug.Log(moveDir);
+        Vector3 destPos = transform.position + moveDir * Speed * Time.deltaTime;
         if (!Managers.Map.CanGo(destPos, Id))
             return;
 
-        transform.position += dir * Speed * Time.deltaTime;
+        Move(destPos, moveDir);
+        // Vector3 moveDir = destPos - transform.position;
+        // Vector3 dir = moveDir.normalized;
 
-        if (MoveDir.x == 0 && MoveDir.z == 0)
+        transform.position += moveDir * Speed * Time.deltaTime;
+
+        if (moveDir.x == 0 && moveDir.z == 0)
             return;
 
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
-            Quaternion.LookRotation(new Vector3(MoveDir.x, 0, MoveDir.z)),
+            Quaternion.LookRotation(new Vector3(moveDir.x, 0, moveDir.z)),
             Time.deltaTime * Speed
         );
     }
@@ -176,7 +183,7 @@ public class PlayerController : BaseController
 
     private bool _doJump;
 
-    protected virtual void SendMove(Vector3 destPos, Vector3 moveVec)
+    protected virtual void SendMove(Vector3 destPos, Vector3 moveVec, PlayerState state)
     {
     }
 

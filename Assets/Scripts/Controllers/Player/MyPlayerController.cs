@@ -69,7 +69,7 @@ public class MyPlayerController : PlayerController
 
     private bool _sendIdle;
 
-    protected override void SendMove(Vector3 destPos, Vector3 moveVec)
+    protected override void SendMove(Vector3 destPos, Vector3 moveVec, PlayerState state)
     {
         C_Move movePacket = new C_Move {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
 
@@ -81,7 +81,7 @@ public class MyPlayerController : PlayerController
         movePacket.MoveDir.PosZ = moveVec.z;
         movePacket.MoveDir.PosX = moveVec.x;
 
-        movePacket.State = State;
+        movePacket.State = state;
 
         Managers.Network.Send(movePacket);
     }
@@ -90,35 +90,16 @@ public class MyPlayerController : PlayerController
     {
         if (_sendIdle)
         {
-            SendMove(transform.position, Vector3.zero);
+            SendMove(transform.position, Vector3.zero, PlayerState.Idle);
             _sendIdle = false;
         }
     }
 
-    protected override void UpdateMoving()
+    protected override void Move(Vector3 position, Vector3 moveDir)
     {
-        Vector3 destPos = transform.position + MoveDir;
-        if (!Managers.Map.CanGo(destPos, Id))
-            return;
-
-        SendMove(destPos, MoveDir);
+        moveDir.y = moveDir.y > 0 ? 1 : moveDir.y;
+        SendMove(position, moveDir, moveDir.y > 0 ? PlayerState.Jump : PlayerState.Move);
         _sendIdle = true;
-
-        PosInfo = destPos;
-
-        Vector3 moveDir = destPos - transform.position;
-        Vector3 dir = moveDir.normalized;
-
-        transform.position += dir * Speed * Time.deltaTime;
-
-        if (MoveDir.x == 0 && MoveDir.z == 0)
-            return;
-
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            Quaternion.LookRotation(new Vector3(MoveDir.x, 0, MoveDir.z)),
-            Time.deltaTime * Speed
-        );
     }
 
     protected override void OnCollisionEnter(Collision collision)
@@ -131,20 +112,5 @@ public class MyPlayerController : PlayerController
         }
 
         base.OnCollisionEnter(collision);
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        switch (LayerMask.LayerToName(collision.gameObject.layer))
-        {
-            case "Wheel":
-                if (MoveDir == Vector3.zero)
-                    SendMove(transform.position, Vector3.zero);
-                break;
-            case "RotateObs":
-                if (MoveDir == Vector3.zero)
-                    SendMove(transform.position, Vector3.zero);
-                break;
-        }
     }
 }

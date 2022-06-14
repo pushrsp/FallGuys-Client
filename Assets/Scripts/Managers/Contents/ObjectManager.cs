@@ -8,7 +8,18 @@ public class ObjectManager
     public MyPlayerController Me { get; set; }
 
     public Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
-    public List<RotateBarController> _rotateObs = new List<RotateBarController>();
+    private List<RotateBarController> _rotateObs = new List<RotateBarController>();
+    public List<WheelController> _wheelObs = new List<WheelController>();
+
+    public void Add(WheelController wheel)
+    {
+        _wheelObs.Add(wheel);
+    }
+
+    public void Add(RotateBarController ro)
+    {
+        _rotateObs.Add(ro);
+    }
 
     public void Add(PlayerInfo info, bool me = false)
     {
