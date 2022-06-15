@@ -32,14 +32,14 @@ public class ObjectManager
             Me = go.GetOrAddComponent<MyPlayerController>();
             Me.Speed = info.Speed;
             Me.Info = info;
-            Me.SyncPos();
+            Me.SyncPos(new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ));
         }
         else
         {
             PlayerController pc = go.GetOrAddComponent<PlayerController>();
             pc.Speed = info.Speed;
             pc.Info = info;
-            pc.SyncPos();
+            pc.SyncPos(new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ));
         }
     }
 

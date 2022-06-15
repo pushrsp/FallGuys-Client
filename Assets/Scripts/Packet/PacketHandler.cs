@@ -39,26 +39,31 @@ public class PacketHandler
     {
         S_Move movePacket = packet as S_Move;
 
-        if (Managers.Object.Me.Id == movePacket.PlayerInfo.ObjectId)
+        if (Managers.Object.Me.Id == movePacket.ObjectId)
             return;
 
-        GameObject go = Managers.Object.FindById(movePacket.PlayerInfo.ObjectId);
+        GameObject go = Managers.Object.FindById(movePacket.ObjectId);
         if (go == null)
             return;
 
         PlayerController pc = go.GetComponent<PlayerController>();
-        {
-            PlayerInfo info = movePacket.PlayerInfo;
-            pc.State = info.State;
-            pc.Speed = info.Speed;
-            pc.PosInfo = new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ);
-            pc.MoveDir = new Vector3(info.MoveDir.PosX, info.MoveDir.PosY, info.MoveDir.PosZ);
-        }
+        pc.State = movePacket.State;
+        pc.DestPos = new Vector3(movePacket.DestPos.PosX, movePacket.DestPos.PosY, movePacket.DestPos.PosZ);
+        pc.MoveDir = new Vector3(movePacket.MoveDir.PosX, movePacket.MoveDir.PosY, movePacket.MoveDir.PosZ);
+
+        if (movePacket.State == PlayerState.Idle)
+            pc.SyncPos();
     }
 
-    public static void S_RotateObsHandler(PacketSession session, IMessage packet)
+    public static void S_JumpHandler(PacketSession session, IMessage packet)
     {
-        S_RotateObs rotateObsPacket = packet as S_RotateObs;
-        Managers.Object.SetRotatePosY(rotateObsPacket.Y);
+        S_Jump jumpPacket = packet as S_Jump;
+
+        if (Managers.Object.Me.Id == jumpPacket.ObjectId)
+            return;
+
+        GameObject go = Managers.Object.FindById(jumpPacket.ObjectId);
+        if (go == null)
+            return;
     }
 }

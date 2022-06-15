@@ -10,6 +10,26 @@ public class MyPlayerController : PlayerController
 {
     [SerializeField] private Vector3 _delta = new Vector3(0.0f, 5.0f, -5.0f);
 
+    private Vector3 _moveDir = Vector3.zero;
+
+    public override Vector3 MoveDir
+    {
+        get { return _moveDir; }
+        set
+        {
+            _moveDir = value;
+            if (value != Vector3.zero)
+            {
+                if (State != PlayerState.Jump)
+                    State = PlayerState.Move;
+            }
+            else
+            {
+                State = PlayerState.Idle;
+            }
+        }
+    }
+
     void LateUpdate()
     {
         Camera.main.transform.position = transform.position + _delta;
@@ -17,7 +37,6 @@ public class MyPlayerController : PlayerController
 
     protected override void Init()
     {
-        // _delta = Camera.main.transform.position - transform.position;
         base.Init();
     }
 
@@ -43,33 +62,30 @@ public class MyPlayerController : PlayerController
 
     private void UpdateKeyboard()
     {
-        Vector3 moveDir = Vector3.zero;
+        Vector3 moveVec = Vector3.zero;
 
         if (Input.GetKey(KeyCode.UpArrow))
-            moveDir += Vector3.forward;
+            moveVec += Vector3.forward;
 
         if (Input.GetKey(KeyCode.DownArrow))
-            moveDir += Vector3.back;
+            moveVec += Vector3.back;
 
         if (Input.GetKey(KeyCode.LeftArrow))
-            moveDir += Vector3.left;
+            moveVec += Vector3.left;
 
         if (Input.GetKey(KeyCode.RightArrow))
-            moveDir += Vector3.right;
+            moveVec += Vector3.right;
 
         if (!_isJump && Input.GetKey(KeyCode.Space))
         {
-            moveDir += Vector3.up;
-            _isJump = true;
             State = PlayerState.Jump;
+            _isJump = true;
         }
 
-        MoveDir = moveDir.normalized;
+        MoveDir = moveVec.normalized;
     }
 
-    private bool _sendIdle;
-
-    protected override void SendMove(Vector3 destPos, Vector3 moveVec, PlayerState state)
+    private void SendMove(Vector3 destPos, Vector3 moveVec, PlayerState state)
     {
         C_Move movePacket = new C_Move {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
 
@@ -77,29 +93,37 @@ public class MyPlayerController : PlayerController
         movePacket.PosInfo.PosZ = destPos.z;
         movePacket.PosInfo.PosX = destPos.x;
 
+        movePacket.State = state;
+
         movePacket.MoveDir.PosY = moveVec.y;
         movePacket.MoveDir.PosZ = moveVec.z;
         movePacket.MoveDir.PosX = moveVec.x;
 
-        movePacket.State = state;
-
         Managers.Network.Send(movePacket);
+    }
+
+    private bool _sendIdle;
+
+    protected override void UpdateMoving()
+    {
+        Vector3 destPos = transform.position + MoveDir * Speed * Time.deltaTime;
+        if (!Managers.Map.CanGo(destPos, Id))
+            return;
+
+        DestPos = destPos;
+        base.UpdateMoving();
+        SendMove(DestPos, MoveDir, PlayerState.Move);
+        if (_sendIdle == false)
+            _sendIdle = true;
     }
 
     protected override void UpdateIdle()
     {
-        if (_sendIdle)
+        if (_sendIdle == true)
         {
             SendMove(transform.position, Vector3.zero, PlayerState.Idle);
             _sendIdle = false;
         }
-    }
-
-    protected override void Move(Vector3 position, Vector3 moveDir)
-    {
-        moveDir.y = moveDir.y > 0 ? 1 : moveDir.y;
-        SendMove(position, moveDir, moveDir.y > 0 ? PlayerState.Jump : PlayerState.Move);
-        _sendIdle = true;
     }
 
     protected override void OnCollisionEnter(Collision collision)

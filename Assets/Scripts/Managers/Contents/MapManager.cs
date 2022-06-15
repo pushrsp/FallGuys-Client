@@ -32,11 +32,7 @@ public class MapManager
             if (pc.Id == objectId)
                 continue;
 
-            float distY = pos.y - pc.PosInfo.y;
-            float distZ = pos.z - pc.PosInfo.z;
-            float distX = pos.x - pc.PosInfo.x;
-            float dist = Mathf.Abs(distY * distY + distZ * distZ + distX * distX);
-
+            float dist = (pos - pc.transform.position).magnitude;
             if (dist < 1.0f)
                 return false;
         }

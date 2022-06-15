@@ -34,22 +34,6 @@ public class PlayerController : BaseController
         set { Info.PlayerSelect = value; }
     }
 
-    public Vector3 PosInfo
-    {
-        get { return new Vector3(Info.PosInfo.PosX, Info.PosInfo.PosY, Info.PosInfo.PosZ); }
-        set
-        {
-            if (Info.PosInfo.PosX == value.x &&
-                Info.PosInfo.PosY == value.y &&
-                Info.PosInfo.PosZ == value.z)
-                return;
-
-            Info.PosInfo.PosX = value.x;
-            Info.PosInfo.PosY = value.y;
-            Info.PosInfo.PosZ = value.z;
-        }
-    }
-
     public PlayerState State
     {
         get { return Info.State; }
@@ -63,7 +47,18 @@ public class PlayerController : BaseController
         }
     }
 
-    public Vector3 MoveDir
+    public Vector3 DestPos
+    {
+        get { return new Vector3(Info.PosInfo.PosX, Info.PosInfo.PosY, Info.PosInfo.PosZ); }
+        set
+        {
+            Info.PosInfo.PosX = value.x;
+            Info.PosInfo.PosY = value.y;
+            Info.PosInfo.PosZ = value.z;
+        }
+    }
+
+    public virtual Vector3 MoveDir
     {
         get { return new Vector3(Info.MoveDir.PosX, Info.MoveDir.PosY, Info.MoveDir.PosZ); }
         set
@@ -71,16 +66,6 @@ public class PlayerController : BaseController
             Info.MoveDir.PosX = value.x;
             Info.MoveDir.PosY = value.y;
             Info.MoveDir.PosZ = value.z;
-
-            if (value != Vector3.zero)
-            {
-                if (State != PlayerState.Jump)
-                    State = PlayerState.Move;
-            }
-            else
-            {
-                State = PlayerState.Idle;
-            }
         }
     }
 
@@ -100,9 +85,14 @@ public class PlayerController : BaseController
         UpdateVelocity();
     }
 
+    public void SyncPos(Vector3 pos)
+    {
+        transform.position = pos;
+    }
+
     public void SyncPos()
     {
-        transform.position = PosInfo;
+        transform.position = DestPos;
     }
 
     private void UpdateVelocity()
@@ -149,30 +139,14 @@ public class PlayerController : BaseController
     {
     }
 
-    protected virtual void Move(Vector3 position, Vector3 moveDir)
-    {
-    }
-
     protected virtual void UpdateMoving()
     {
-        Vector3 moveDir = MoveDir;
-        Debug.Log(moveDir);
-        Vector3 destPos = transform.position + moveDir * Speed * Time.deltaTime;
-        if (!Managers.Map.CanGo(destPos, Id))
-            return;
+        Vector3 moveDist = DestPos - transform.position;
 
-        Move(destPos, moveDir);
-        // Vector3 moveDir = destPos - transform.position;
-        // Vector3 dir = moveDir.normalized;
-
-        transform.position += moveDir * Speed * Time.deltaTime;
-
-        if (moveDir.x == 0 && moveDir.z == 0)
-            return;
-
+        transform.position += moveDist.normalized * Speed * Time.deltaTime;
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
-            Quaternion.LookRotation(new Vector3(moveDir.x, 0, moveDir.z)),
+            Quaternion.LookRotation(new Vector3(MoveDir.x, 0, MoveDir.z)),
             Time.deltaTime * Speed
         );
     }
@@ -183,16 +157,12 @@ public class PlayerController : BaseController
 
     private bool _doJump;
 
-    protected virtual void SendMove(Vector3 destPos, Vector3 moveVec, PlayerState state)
-    {
-    }
-
     protected virtual void UpdateJump()
     {
         if (!_doJump)
         {
             _doJump = true;
-            _rigid.AddForce(Vector3.up * 9, ForceMode.Impulse);
+            _rigid.AddForce(Vector3.up * 10, ForceMode.Impulse);
         }
 
         UpdateMoving();
@@ -209,23 +179,10 @@ public class PlayerController : BaseController
                 Anim.SetBool("isJump", false);
                 break;
         }
-
-        switch (LayerMask.LayerToName(collision.gameObject.layer))
-        {
-            case "Wheel":
-                transform.SetParent(collision.transform);
-                break;
-        }
     }
 
     private void OnCollisionExit(Collision other)
     {
-        switch (LayerMask.LayerToName(other.gameObject.layer))
-        {
-            case "Wheel":
-                transform.SetParent(null);
-                break;
-        }
     }
 
     private void UpdateAnimation()
