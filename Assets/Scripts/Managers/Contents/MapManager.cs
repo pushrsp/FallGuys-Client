@@ -33,7 +33,7 @@ public class MapManager
                 continue;
 
             float dist = (pos - pc.transform.position).magnitude;
-            if (dist < 1.0f)
+            if (dist < 1.5f)
                 return false;
         }
 

@@ -19,14 +19,9 @@ public class MyPlayerController : PlayerController
         {
             _moveDir = value;
             if (value != Vector3.zero)
-            {
-                if (State != PlayerState.Jump)
-                    State = PlayerState.Move;
-            }
+                State = PlayerState.Move;
             else
-            {
                 State = PlayerState.Idle;
-            }
         }
     }
 
@@ -48,9 +43,6 @@ public class MyPlayerController : PlayerController
                 UpdateKeyboard();
                 break;
             case PlayerState.Move:
-                UpdateKeyboard();
-                break;
-            case PlayerState.Jump:
                 UpdateKeyboard();
                 break;
         }
@@ -78,11 +70,19 @@ public class MyPlayerController : PlayerController
 
         if (!_isJump && Input.GetKey(KeyCode.Space))
         {
-            State = PlayerState.Jump;
+            SendJump();
             _isJump = true;
+            DoJump();
         }
 
         MoveDir = moveVec.normalized;
+    }
+
+    protected override void SendJump()
+    {
+        C_Jump jumpPacket = new C_Jump();
+
+        Managers.Network.Send(jumpPacket);
     }
 
     private void SendMove(Vector3 destPos, Vector3 moveVec, PlayerState state)

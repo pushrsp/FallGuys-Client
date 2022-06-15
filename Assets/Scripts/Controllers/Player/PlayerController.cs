@@ -129,9 +129,6 @@ public class PlayerController : BaseController
             case PlayerState.Hit:
                 UpdateHit();
                 break;
-            case PlayerState.Jump:
-                UpdateJump();
-                break;
         }
     }
 
@@ -155,17 +152,15 @@ public class PlayerController : BaseController
     {
     }
 
-    private bool _doJump;
-
-    protected virtual void UpdateJump()
+    protected virtual void SendJump()
     {
-        if (!_doJump)
-        {
-            _doJump = true;
-            _rigid.AddForce(Vector3.up * 10, ForceMode.Impulse);
-        }
+    }
 
-        UpdateMoving();
+    public void DoJump()
+    {
+        _rigid.AddForce(Vector3.up * 10, ForceMode.Impulse);
+        Anim.SetTrigger("doJump");
+        Anim.SetBool("isJump", true);
     }
 
     protected virtual void OnCollisionEnter(Collision collision)
@@ -173,7 +168,6 @@ public class PlayerController : BaseController
         switch (collision.gameObject.tag)
         {
             case "Terrain":
-                _doJump = false;
                 if (Anim.GetBool("isJump"))
                     State = PlayerState.Idle;
                 Anim.SetBool("isJump", false);
@@ -197,10 +191,6 @@ public class PlayerController : BaseController
                 break;
             case PlayerState.Move:
                 Anim.SetFloat("speed", Speed);
-                break;
-            case PlayerState.Jump:
-                Anim.SetTrigger("doJump");
-                Anim.SetBool("isJump", true);
                 break;
         }
     }

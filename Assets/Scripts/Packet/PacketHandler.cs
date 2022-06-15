@@ -65,5 +65,8 @@ public class PacketHandler
         GameObject go = Managers.Object.FindById(jumpPacket.ObjectId);
         if (go == null)
             return;
+
+        PlayerController pc = go.GetComponent<PlayerController>();
+        pc.DoJump();
     }
 }
