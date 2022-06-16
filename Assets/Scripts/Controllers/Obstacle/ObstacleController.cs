@@ -9,4 +9,6 @@ public class ObstacleController : BaseController
         Left,
         Right
     }
+
+    public int ObstacleId { get; set; }
 }

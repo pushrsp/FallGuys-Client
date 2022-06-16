@@ -8,17 +8,13 @@ public class ObjectManager
     public MyPlayerController Me { get; set; }
 
     public Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
-    private List<RotateBarController> _rotateObs = new List<RotateBarController>();
-    public List<WheelController> _wheelObs = new List<WheelController>();
+    private Dictionary<int, GameObject> _obstacles = new Dictionary<int, GameObject>();
+    private int _obstacleId = 1;
 
-    public void Add(WheelController wheel)
+    public void Add(ObstacleController obs, GameObject go)
     {
-        _wheelObs.Add(wheel);
-    }
-
-    public void Add(RotateBarController ro)
-    {
-        _rotateObs.Add(ro);
+        obs.ObstacleId = _obstacleId++;
+        _obstacles.Add(obs.ObstacleId, go);
     }
 
     public void Add(PlayerInfo info, bool me = false)
@@ -52,10 +48,13 @@ public class ObjectManager
         return go;
     }
 
-    public void SetRotatePosY(float y)
+    public GameObject FindObstacleById(int obstacleId)
     {
-        foreach (RotateBarController ro in _rotateObs)
-            ro.YPos = y;
+        GameObject go;
+        if (_obstacles.TryGetValue(obstacleId, out go) == false)
+            return null;
+
+        return go;
     }
 
     public void Remove(int objectId)

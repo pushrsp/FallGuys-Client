@@ -72,25 +72,20 @@ public class Map
                             case "barrel":
                                 writer.Write('5');
                                 break;
-                            //진자운동 장애물
-                            case "rock":
-                                writer.Write('6');
-                                break;
-                            //회전 장애물
-                            case "chest":
-                                writer.Write('7');
-                                break;
                             //출발 리스폰 지역
                             case "tileset_70":
                                 writer.Write('8');
                                 break;
-                            //회전 휠 장애물
-                            case "tileset_73":
+                            //회전 막대기 장애물
+                            case "chest":
                                 writer.Write('a');
                                 break;
                             //회전 휠 장애물 pivot
-                            case "tileset_9":
+                            case "tileset_49":
                                 writer.Write('b');
+                                break;
+                            default:
+                                writer.Write('0');
                                 break;
                         }
                     }

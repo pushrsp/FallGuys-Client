@@ -2,6 +2,7 @@ using Core;
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 // ReSharper disable All
 
@@ -68,5 +69,17 @@ public class PacketHandler
 
         PlayerController pc = go.GetComponent<PlayerController>();
         pc.DoJump();
+    }
+
+    public static void S_RotateObstacleHandler(PacketSession session, IMessage packet)
+    {
+        S_RotateObstacle rotateObstaclePacket = packet as S_RotateObstacle;
+
+        GameObject go = Managers.Object.FindObstacleById(rotateObstaclePacket.ObstacleId);
+        if (go == null)
+            return;
+
+        RotateBarController rc = go.GetComponent<RotateBarController>();
+        rc.YAngle = rotateObstaclePacket.YAngle;
     }
 }
