@@ -23,20 +23,8 @@ public class MapManager
 
     private char[,,] _collision;
 
-    public bool CanGo(Vector3 pos, int objectId)
+    public bool CanGo(Vector3 pos)
     {
-        foreach (GameObject go in Managers.Object._objects.Values)
-        {
-            PlayerController pc = go.GetComponent<PlayerController>();
-
-            if (pc.Id == objectId)
-                continue;
-
-            float dist = (pos - pc.transform.position).magnitude;
-            if (dist < 1.5f)
-                return false;
-        }
-
         return CanGo(Vector3Int.RoundToInt(pos));
     }
 
@@ -53,8 +41,6 @@ public class MapManager
         int z = MaxZ - pos.z;
         int x = pos.x - MinX;
 
-        // Debug.Log($"ROUND: ({y}, {z}, {x})");
-
         switch (_collision[y, z, x])
         {
             case '0':
@@ -64,7 +50,7 @@ public class MapManager
             case '4':
                 return false;
             case '5':
-                return false;
+                return true;
             case '6':
                 return true;
             case '7':
@@ -76,7 +62,7 @@ public class MapManager
             case 'b':
                 return true;
             default:
-                return false;
+                return true;
         }
     }
 

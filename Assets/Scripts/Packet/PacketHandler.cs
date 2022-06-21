@@ -82,4 +82,11 @@ public class PacketHandler
         RotateBarController rc = go.GetComponent<RotateBarController>();
         rc.YAngle = rotateObstaclePacket.YAngle;
     }
+
+    public static void S_DieHandler(PacketSession session, IMessage packet)
+    {
+        S_Die diePacket = packet as S_Die;
+
+        Managers.Object.Remove(diePacket.ObjectId);
+    }
 }

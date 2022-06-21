@@ -46,6 +46,8 @@ class PacketManager
         _handler.Add((ushort) MsgId.SJump, PacketHandler.S_JumpHandler);
         _onRecv.Add((ushort) MsgId.SRotateObstacle, MakePacket<S_RotateObstacle>);
         _handler.Add((ushort) MsgId.SRotateObstacle, PacketHandler.S_RotateObstacleHandler);
+        _onRecv.Add((ushort) MsgId.SDie, MakePacket<S_Die>);
+        _handler.Add((ushort) MsgId.SDie, PacketHandler.S_DieHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

@@ -106,8 +106,11 @@ public class MyPlayerController : PlayerController
 
     protected override void UpdateMoving()
     {
+        if (Physics.Raycast(transform.position + Vector3.up, MoveDir, 1.2f, LayerMask.GetMask("Player")))
+            return;
+
         Vector3 destPos = transform.position + MoveDir * Speed * Time.deltaTime;
-        if (!Managers.Map.CanGo(destPos, Id))
+        if (!Managers.Map.CanGo(destPos))
             return;
 
         DestPos = destPos;

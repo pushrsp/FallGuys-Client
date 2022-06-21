@@ -72,7 +72,7 @@ public class Map
                             case "barrel":
                                 writer.Write('5');
                                 break;
-                            //출발 리스폰 지역
+                            //리스폰 지역
                             case "tileset_70":
                                 writer.Write('8');
                                 break;

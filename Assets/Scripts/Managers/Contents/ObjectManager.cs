@@ -25,6 +25,7 @@ public class ObjectManager
 
         if (me)
         {
+            go.tag = "Me";
             Me = go.GetOrAddComponent<MyPlayerController>();
             Me.Speed = info.Speed;
             Me.Info = info;
