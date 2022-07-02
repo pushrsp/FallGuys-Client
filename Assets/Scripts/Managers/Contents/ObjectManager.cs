@@ -9,12 +9,26 @@ public class ObjectManager
 
     public Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
     private Dictionary<int, GameObject> _obstacles = new Dictionary<int, GameObject>();
-    private int _obstacleId = 1;
 
-    public void Add(ObstacleController obs, GameObject go)
+    public void Add(int obstacleId, ObstacleType type)
     {
-        obs.ObstacleId = _obstacleId++;
-        _obstacles.Add(obs.ObstacleId, go);
+        GameObject go = Managers.Map.GetObstacles(type);
+        if (go == null)
+            return;
+
+        switch (type)
+        {
+            case ObstacleType.Rotate:
+                RotateBarController rc = go.GetComponent<RotateBarController>();
+                rc.ObstacleId = obstacleId;
+                _obstacles.Add(rc.ObstacleId, go);
+                break;
+            case ObstacleType.Pendulum:
+                PendulumController pc = go.GetComponent<PendulumController>();
+                pc.ObstacleId = obstacleId;
+                _obstacles.Add(pc.ObstacleId, go);
+                break;
+        }
     }
 
     public void Add(PlayerInfo info, bool me = false)

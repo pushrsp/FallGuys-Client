@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class MapManager
 {
+    public GameObject Stage { get; private set; }
+
     public int MinY { get; set; }
     public int MaxY { get; set; }
 
@@ -22,6 +24,22 @@ public class MapManager
     private int XCount { get; set; }
 
     private char[,,] _collision;
+    private List<GameObject> _obstacles = new List<GameObject>();
+
+    public GameObject GetObstacles(ObstacleType type)
+    {
+        foreach (GameObject obs in _obstacles)
+        {
+            ObstacleController oc = obs.GetComponent<ObstacleController>();
+            if (oc.Type == type)
+            {
+                _obstacles.Remove(obs);
+                return obs;
+            }
+        }
+
+        return null;
+    }
 
     public bool CanGo(Vector3 pos)
     {
@@ -67,11 +85,31 @@ public class MapManager
     }
 
 
-    public GameObject LoadStage(int mapId)
+    public void LoadStage(int mapId)
     {
         string stageName = "Stage_" + mapId.ToString("000");
-        GameObject stage = Managers.Resource.Instantiate($"Stages/{stageName}");
-        stage.name = stageName;
+        Stage = Managers.Resource.Instantiate($"Stages/{stageName}");
+        Stage.name = stageName;
+
+        Transform obstacles = Helper.FindChild<Transform>(Stage, "Obstacles");
+        List<GameObject> rotate =
+            Helper.FindChildrenByTag(obstacles.gameObject, "RotateObstacle");
+        List<GameObject> pendulum =
+            Helper.FindChildrenByTag(obstacles.gameObject, "PendulumObstacle");
+
+        foreach (GameObject obs in rotate)
+        {
+            RotateBarController rc = obs.GetOrAddComponent<RotateBarController>();
+            rc.Type = ObstacleType.Rotate;
+            _obstacles.Add(obs);
+        }
+
+        foreach (GameObject obs in pendulum)
+        {
+            PendulumController pc = obs.GetOrAddComponent<PendulumController>();
+            pc.Type = ObstacleType.Pendulum;
+            _obstacles.Add(obs);
+        }
 
         TextAsset txt = Managers.Resource.Load<TextAsset>($"StageData/{stageName}/{stageName}_Info");
         StringReader reader = new StringReader(txt.text);
@@ -105,7 +143,5 @@ public class MapManager
                 }
             }
         }
-
-        return stage;
     }
 }

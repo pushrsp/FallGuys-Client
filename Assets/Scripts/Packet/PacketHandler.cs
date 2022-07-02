@@ -89,4 +89,25 @@ public class PacketHandler
 
         Managers.Object.Remove(diePacket.ObjectId);
     }
+
+    public static void S_PendulumObstacleHandler(PacketSession session, IMessage packet)
+    {
+        S_PendulumObstacle pendulumObstacle = packet as S_PendulumObstacle;
+
+        GameObject go = Managers.Object.FindObstacleById(pendulumObstacle.ObstacleId);
+        if (go == null)
+            return;
+
+        PendulumController pc = go.GetComponent<PendulumController>();
+        pc.Pos = new Vector3(pendulumObstacle.PosInfo.PosX, pendulumObstacle.PosInfo.PosY,
+            pendulumObstacle.PosInfo.PosZ);
+    }
+
+    public static void S_SpawnObstacleHandler(PacketSession session, IMessage packet)
+    {
+        S_SpawnObstacle obstaclesPacket = packet as S_SpawnObstacle;
+
+        foreach (ObstacleInfo obstacle in obstaclesPacket.Obstacles)
+            Managers.Object.Add(obstacle.ObstacleId, obstacle.Type);
+    }
 }

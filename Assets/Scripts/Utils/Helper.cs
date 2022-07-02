@@ -37,16 +37,16 @@ public class Helper
         return collisions;
     }
 
-    public static List<T> FindChildrenByTag<T>(GameObject go, string tag = null) where T : Object
+    public static List<GameObject> FindChildrenByTag(GameObject go, string tag = null)
     {
-        List<T> collisions = new List<T>();
+        List<GameObject> objects = new List<GameObject>();
         for (int i = 0; i < go.transform.childCount; i++)
         {
             Transform child = go.transform.GetChild(i);
             if (child.gameObject.CompareTag(tag))
-                collisions.Add(child.GetComponent<T>());
+                objects.Add(child.gameObject);
         }
 
-        return collisions;
+        return objects;
     }
 }

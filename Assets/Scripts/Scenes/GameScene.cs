@@ -10,13 +10,7 @@ public class GameScene : BaseScene
 
         SceneType = Define.Scene.Game;
 
-        GameObject stage = Managers.Map.LoadStage(1);
-        Transform obstacles = Helper.FindChild<Transform>(stage, "Obstacles");
-        List<ObstacleController> rotateObs =
-            Helper.FindChildrenByTag<ObstacleController>(obstacles.gameObject, "Obstacle");
-
-        foreach (ObstacleController obs in rotateObs)
-            Managers.Object.Add(obs, obs.gameObject);
+        Managers.Map.LoadStage(1);
 
         Screen.SetResolution(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2, false);
     }
