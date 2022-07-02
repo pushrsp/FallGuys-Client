@@ -80,8 +80,8 @@ public class Map
                             case "chest":
                                 writer.Write('a');
                                 break;
-                            //회전 휠 장애물 pivot
-                            case "tileset_49":
+                            //진자 운동 장애물
+                            case "rock":
                                 writer.Write('b');
                                 break;
                             default:
