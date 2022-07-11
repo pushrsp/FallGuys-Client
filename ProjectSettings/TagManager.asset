@@ -6,8 +6,10 @@ TagManager:
   tags:
   - Road
   - Terrain
-  - Obstacle
   - Me
+  - RotateObstacle
+  - PendulumObstacle
+  - Obstacle
   layers:
   - Default
   - TransparentFX

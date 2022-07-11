@@ -41,11 +41,17 @@ public class Managers : MonoBehaviour
     #region Core
 
     private ResourceManager _resource = new ResourceManager();
+    private SceneManagerEx _scene = new SceneManagerEx();
 
 
     public static ResourceManager Resource
     {
         get => Instance._resource;
+    }
+
+    public static SceneManagerEx Scene
+    {
+        get => Instance._scene;
     }
 
     #endregion
