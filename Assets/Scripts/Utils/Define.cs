@@ -13,11 +13,9 @@ public class Define
         Game,
     }
 
-    public enum State
+    public enum UIEvent
     {
-        Idle,
-        Move,
-        Hit,
-        Jump
+        Click,
+        Drag,
     }
 }

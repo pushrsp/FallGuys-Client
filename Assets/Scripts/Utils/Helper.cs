@@ -13,12 +13,40 @@ public class Helper
         return component;
     }
 
-    public static T FindChild<T>(GameObject go, string name = null) where T : Object
+    public static GameObject FindChild(GameObject go, string name = null, bool recursive = false)
     {
-        foreach (T child in go.GetComponentsInChildren<T>())
+        Transform transform = FindChild<Transform>(go, name);
+        if (transform == null)
+            return null;
+
+        return transform.gameObject;
+    }
+
+    public static T FindChild<T>(GameObject go, string name = null, bool recursive = false) where T : Object
+    {
+        if (go == null)
+            return null;
+
+        if (recursive == false)
         {
-            if (string.IsNullOrEmpty(name) || child.name == name)
-                return child;
+            for (int i = 0; i < go.transform.childCount; i++)
+            {
+                Transform transform = go.transform.GetChild(i);
+                if (string.IsNullOrEmpty(name) || transform.name == name)
+                {
+                    T component = transform.GetComponent<T>();
+                    if (component != null)
+                        return component;
+                }
+            }
+        }
+        else
+        {
+            foreach (T component in go.GetComponentsInChildren<T>())
+            {
+                if (string.IsNullOrEmpty(name) || component.name == name)
+                    return component;
+            }
         }
 
         return null;

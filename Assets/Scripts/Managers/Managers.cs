@@ -42,6 +42,7 @@ public class Managers : MonoBehaviour
 
     private ResourceManager _resource = new ResourceManager();
     private SceneManagerEx _scene = new SceneManagerEx();
+    private UIManager _ui = new UIManager();
 
 
     public static ResourceManager Resource
@@ -52,6 +53,11 @@ public class Managers : MonoBehaviour
     public static SceneManagerEx Scene
     {
         get => Instance._scene;
+    }
+
+    public static UIManager UI
+    {
+        get => Instance._ui;
     }
 
     #endregion
@@ -68,8 +74,6 @@ public class Managers : MonoBehaviour
             }
 
             DontDestroyOnLoad(go);
-
-            _instance._network.Init();
         }
     }
 
