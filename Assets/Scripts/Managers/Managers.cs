@@ -6,7 +6,7 @@ public class Managers : MonoBehaviour
 {
     private static Managers _instance;
 
-    private static Managers Instance
+    public static Managers Instance
     {
         get
         {
@@ -20,6 +20,7 @@ public class Managers : MonoBehaviour
     private MapManager _map = new MapManager();
     private NetworkManager _network = new NetworkManager();
     private ObjectManager _object = new ObjectManager();
+    private WebManager _web = new WebManager();
 
     public static MapManager Map
     {
@@ -34,6 +35,11 @@ public class Managers : MonoBehaviour
     public static ObjectManager Object
     {
         get => Instance._object;
+    }
+
+    public static WebManager Web
+    {
+        get => Instance._web;
     }
 
     #endregion

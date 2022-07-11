@@ -42,7 +42,13 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SPendulumObstacle, MakePacket<S_PendulumObstacle>);
 		_handler.Add((ushort)MsgId.SPendulumObstacle, PacketHandler.S_PendulumObstacleHandler);		
 		_onRecv.Add((ushort)MsgId.SSpawnObstacle, MakePacket<S_SpawnObstacle>);
-		_handler.Add((ushort)MsgId.SSpawnObstacle, PacketHandler.S_SpawnObstacleHandler);
+		_handler.Add((ushort)MsgId.SSpawnObstacle, PacketHandler.S_SpawnObstacleHandler);		
+		_onRecv.Add((ushort)MsgId.SConnected, MakePacket<S_Connected>);
+		_handler.Add((ushort)MsgId.SConnected, PacketHandler.S_ConnectedHandler);		
+		_onRecv.Add((ushort)MsgId.SLogin, MakePacket<S_Login>);
+		_handler.Add((ushort)MsgId.SLogin, PacketHandler.S_LoginHandler);		
+		_onRecv.Add((ushort)MsgId.SRoom, MakePacket<S_Room>);
+		_handler.Add((ushort)MsgId.SRoom, PacketHandler.S_RoomHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

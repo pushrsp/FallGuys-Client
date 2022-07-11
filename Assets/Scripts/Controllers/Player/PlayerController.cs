@@ -16,7 +16,7 @@ public class PlayerController : BaseController
         set { _playerInfo = value; }
     }
 
-    public int Id
+    public string Id
     {
         get { return Info.ObjectId; }
         set { Info.ObjectId = value; }

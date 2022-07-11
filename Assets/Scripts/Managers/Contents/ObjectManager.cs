@@ -5,9 +5,12 @@ using UnityEngine;
 
 public class ObjectManager
 {
+    public string Token { get; set; }
+    public string Id { get; set; }
+    public string Username { get; set; }
     public MyPlayerController Me { get; set; }
 
-    public Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
+    public Dictionary<string, GameObject> _objects = new Dictionary<string, GameObject>();
     private Dictionary<int, GameObject> _obstacles = new Dictionary<int, GameObject>();
 
     public void Add(int obstacleId, ObstacleType type)
@@ -54,7 +57,7 @@ public class ObjectManager
         }
     }
 
-    public GameObject FindById(int objectId)
+    public GameObject FindById(string objectId)
     {
         GameObject go;
         if (_objects.TryGetValue(objectId, out go) == false)
@@ -72,7 +75,7 @@ public class ObjectManager
         return go;
     }
 
-    public void Remove(int objectId)
+    public void Remove(string objectId)
     {
         GameObject go = FindById(objectId);
         if (go == null)

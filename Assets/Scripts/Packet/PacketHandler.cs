@@ -32,7 +32,7 @@ public class PacketHandler
     {
         S_Despawn despawn = packet as S_Despawn;
 
-        foreach (int objectId in despawn.PlayerId)
+        foreach (string objectId in despawn.PlayerId)
             Managers.Object.Remove(objectId);
     }
 
@@ -109,5 +109,33 @@ public class PacketHandler
 
         foreach (ObstacleInfo obstacle in obstaclesPacket.Obstacles)
             Managers.Object.Add(obstacle.ObstacleId, obstacle.Type);
+    }
+
+    public static void S_ConnectedHandler(PacketSession session, IMessage packet)
+    {
+        C_Login loginPacket = new C_Login();
+        loginPacket.Token = Managers.Object.Token;
+
+        Managers.Network.Send(loginPacket);
+    }
+
+    public static void S_LoginHandler(PacketSession session, IMessage packet)
+    {
+        S_Login loginOk = packet as S_Login;
+
+        if (loginOk.Success)
+        {
+            Managers.Object.Id = loginOk.Id;
+            Managers.Object.Username = loginOk.Username;
+
+            Managers.Scene.LoadScene(Define.Scene.Room);
+            C_EnterLobby enterPacket = new C_EnterLobby();
+            Managers.Network.Send(enterPacket);
+        }
+    }
+
+    public static void S_RoomHandler(PacketSession session, IMessage packet)
+    {
+        S_Room loginOk = packet as S_Room;
     }
 }
