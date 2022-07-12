@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Protocol;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,17 +11,17 @@ public class SceneManagerEx
         get => GameObject.FindObjectOfType<BaseScene>();
     }
 
-    public Define.Scene Scene { get; private set; }
+    public GameState Scene { get; private set; } = GameState.Login;
 
-    public void LoadScene(Define.Scene type)
+    public void LoadScene(GameState type)
     {
         Scene = type;
         SceneManager.LoadScene(GetSceneName(type));
     }
 
-    string GetSceneName(Define.Scene type)
+    string GetSceneName(GameState type)
     {
-        string name = System.Enum.GetName(typeof(Define.Scene), type);
+        string name = System.Enum.GetName(typeof(GameState), type);
         return name;
     }
 

@@ -12,4 +12,9 @@ public class RoomManager
         Rooms.Add(info);
         Rooms.Sort((a, b) => a.Idx - b.Idx);
     }
+
+    public void Clear()
+    {
+        Rooms.Clear();
+    }
 }

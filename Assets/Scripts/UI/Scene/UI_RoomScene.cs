@@ -46,6 +46,9 @@ public class UI_RoomScene : UI_Scene
         if (Managers.Room.Rooms.Count == 0)
             return;
 
+        foreach (Transform child in _grid.transform)
+            Destroy(child.gameObject);
+
         foreach (RoomInfo room in Managers.Room.Rooms)
         {
             GameObject go = Managers.Resource.Instantiate("UI/Scene/UI_RoomScene_Item", _grid.transform);

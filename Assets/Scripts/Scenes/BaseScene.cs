@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Protocol;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class BaseScene : MonoBehaviour
 {
-    public Define.Scene SceneType { get; protected set; } = Define.Scene.Unknown;
+    public GameState SceneType { get; protected set; } = GameState.Login;
 
     void Awake()
     {

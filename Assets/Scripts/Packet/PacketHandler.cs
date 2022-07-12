@@ -128,8 +128,8 @@ public class PacketHandler
             Managers.Object.Id = loginOk.Id;
             Managers.Object.Username = loginOk.Username;
 
-            Managers.Scene.LoadScene(Define.Scene.Room);
-            C_EnterLobby enterPacket = new C_EnterLobby();
+            Managers.Scene.LoadScene(GameState.Room);
+            C_EnterGame enterPacket = new C_EnterGame();
             Managers.Network.Send(enterPacket);
         }
     }
@@ -140,6 +140,26 @@ public class PacketHandler
 
         foreach (RoomInfo info in roomList.Rooms)
             Managers.Room.Add(info);
+
+        UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
+        roomScene.SetUI();
+    }
+
+    public static void S_MakeRoomOkHandler(PacketSession session, IMessage packet)
+    {
+        S_MakeRoomOk makeRoomPacket = packet as S_MakeRoomOk;
+
+        if (!makeRoomPacket.Success)
+            return;
+
+        Managers.Room.Clear();
+        Managers.Scene.LoadScene(GameState.Lobby);
+    }
+
+    public static void S_AddRoomHandler(PacketSession session, IMessage packet)
+    {
+        S_AddRoom makeRoomPacket = packet as S_AddRoom;
+        Managers.Room.Add(makeRoomPacket.Room);
 
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();

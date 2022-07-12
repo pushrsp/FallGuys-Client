@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Protocol;
 using UnityEngine;
 
 public class RoomScene : BaseScene
@@ -8,7 +9,7 @@ public class RoomScene : BaseScene
     {
         base.Init();
 
-        SceneType = Define.Scene.Room;
+        SceneType = GameState.Room;
         Managers.UI.ShowSceneUI<UI_RoomScene>();
     }
 }
