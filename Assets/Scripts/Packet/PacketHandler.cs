@@ -134,8 +134,14 @@ public class PacketHandler
         }
     }
 
-    public static void S_RoomHandler(PacketSession session, IMessage packet)
+    public static void S_RoomListHandler(PacketSession session, IMessage packet)
     {
-        S_Room loginOk = packet as S_Room;
+        S_RoomList roomList = packet as S_RoomList;
+
+        foreach (RoomInfo info in roomList.Rooms)
+            Managers.Room.Add(info);
+
+        UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
+        roomScene.SetUI();
     }
 }

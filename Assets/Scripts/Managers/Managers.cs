@@ -20,6 +20,7 @@ public class Managers : MonoBehaviour
     private MapManager _map = new MapManager();
     private NetworkManager _network = new NetworkManager();
     private ObjectManager _object = new ObjectManager();
+    private RoomManager _room = new RoomManager();
     private WebManager _web = new WebManager();
 
     public static MapManager Map
@@ -35,6 +36,11 @@ public class Managers : MonoBehaviour
     public static ObjectManager Object
     {
         get => Instance._object;
+    }
+
+    public static RoomManager Room
+    {
+        get => Instance._room;
     }
 
     public static WebManager Web

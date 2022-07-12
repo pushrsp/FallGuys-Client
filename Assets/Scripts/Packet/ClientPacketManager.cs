@@ -47,8 +47,8 @@ class PacketManager
 		_handler.Add((ushort)MsgId.SConnected, PacketHandler.S_ConnectedHandler);		
 		_onRecv.Add((ushort)MsgId.SLogin, MakePacket<S_Login>);
 		_handler.Add((ushort)MsgId.SLogin, PacketHandler.S_LoginHandler);		
-		_onRecv.Add((ushort)MsgId.SRoom, MakePacket<S_Room>);
-		_handler.Add((ushort)MsgId.SRoom, PacketHandler.S_RoomHandler);
+		_onRecv.Add((ushort)MsgId.SRoomList, MakePacket<S_RoomList>);
+		_handler.Add((ushort)MsgId.SRoomList, PacketHandler.S_RoomListHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

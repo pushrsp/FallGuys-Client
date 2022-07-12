@@ -7,8 +7,8 @@ public class RoomScene : BaseScene
     protected override void Init()
     {
         base.Init();
+
         SceneType = Define.Scene.Room;
-        
-        Debug.Log(Managers.Scene.Scene);
+        Managers.UI.ShowSceneUI<UI_RoomScene>();
     }
 }
