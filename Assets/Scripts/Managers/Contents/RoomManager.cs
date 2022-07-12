@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RoomManager
 {
-    public List<RoomInfo> Rooms { get; set; } = new List<RoomInfo>();
+    public List<RoomInfo> Rooms { get; } = new List<RoomInfo>();
 
     public void Add(RoomInfo info)
     {
