@@ -43,7 +43,7 @@ public class UI_RoomScene : UI_Scene
 
     public void SetUI()
     {
-        if (Managers.Room.Rooms.Count == 0)
+        if (Managers.Room.Rooms.Count == 0 || Managers.Room.EnterRoomIdx != -1)
             return;
 
         foreach (Transform child in _grid.transform)
@@ -54,12 +54,7 @@ public class UI_RoomScene : UI_Scene
             GameObject go = Managers.Resource.Instantiate("UI/Scene/UI_RoomScene_Item", _grid.transform);
             go.name = $"Room_{room.Idx}";
             UI_RoomScene_Item item = go.GetOrAddComponent<UI_RoomScene_Item>();
-            {
-                item.Idx = room.Idx;
-                item.Title = room.Title;
-                item.PlayersCount = room.PlayerCount;
-                item.State = room.State;
-            }
+            item.Info.MergeFrom(room);
 
             item.SetRoom();
         }

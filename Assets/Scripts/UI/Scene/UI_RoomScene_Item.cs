@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class UI_RoomScene_Item : UI_Base
 {
     public RoomInfo Info { get; } = new RoomInfo();
+
     public RoomState State
     {
         get { return Info.State; }
@@ -31,9 +32,10 @@ public class UI_RoomScene_Item : UI_Base
         get { return Info.OwnerId; }
         set { Info.OwnerId = value; }
     }
+
     public int PlayersCount
     {
-        get { return Info.PlayerCount;}
+        get { return Info.PlayerCount; }
         set { Info.PlayerCount = value; }
     }
 
@@ -47,17 +49,19 @@ public class UI_RoomScene_Item : UI_Base
     {
         EnterBtn
     }
+
     protected override void Init()
     {
         Bind<Image>(typeof(Images));
         Bind<Text>(typeof(Texts));
-        
+
         GetImage((int) Images.EnterBtn).gameObject.BindEvent(OnClickEnter);
     }
 
     private void OnClickEnter(PointerEventData evt)
     {
-        Debug.Log($"OnClickEnter {Idx}");
+        Managers.Room.Clear(Idx);
+        Managers.Scene.LoadScene(GameState.Lobby);
     }
 
     public void SetRoom()

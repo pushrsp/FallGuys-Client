@@ -10,22 +10,24 @@ public class PlayerController : BaseController
 {
     private PlayerInfo _playerInfo = new PlayerInfo {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
 
+    public GameState GameState { get; set; }
+
     public PlayerInfo Info
     {
         get { return _playerInfo; }
         set { _playerInfo = value; }
     }
 
-    public string Id
+    public string ObjectId
     {
         get { return Info.ObjectId; }
         set { Info.ObjectId = value; }
     }
 
-    public string Name
+    public string Username
     {
-        get { return Info.Name; }
-        set { Info.Name = value; }
+        get { return Info.Username; }
+        set { Info.Username = value; }
     }
 
     public int PlayerSelect

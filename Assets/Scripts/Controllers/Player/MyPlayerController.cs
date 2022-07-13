@@ -110,7 +110,7 @@ public class MyPlayerController : PlayerController
             return;
 
         Vector3 destPos = transform.position + MoveDir * Speed * Time.deltaTime;
-        if (!Managers.Map.CanGo(destPos))
+        if (GameState == GameState.Game && !Managers.Map.CanGo(destPos))
             return;
 
         DestPos = destPos;

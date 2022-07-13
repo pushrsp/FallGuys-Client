@@ -47,7 +47,6 @@ public class UI_MakeRoom : UI_Scene
             return;
         }
 
-        //TODO: 방 만들기
         C_MakeRoom makeRoomPacket = new C_MakeRoom();
         makeRoomPacket.Id = Managers.Object.Id;
         makeRoomPacket.Title = title;

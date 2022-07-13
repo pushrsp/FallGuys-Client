@@ -34,10 +34,10 @@ public class ObjectManager
         }
     }
 
-    public void Add(PlayerInfo info, bool me = false)
+    public void Add(PlayerInfo info, GameState gameState, bool me = false)
     {
         GameObject go = Managers.Resource.Instantiate($"Players/{info.PlayerSelect}");
-        go.name = info.Name;
+        go.name = info.Username;
         _objects.Add(info.ObjectId, go);
 
         if (me)
@@ -45,7 +45,8 @@ public class ObjectManager
             go.tag = "Me";
             Me = go.GetOrAddComponent<MyPlayerController>();
             Me.Speed = info.Speed;
-            Me.Info = info;
+            Me.Info.MergeFrom(info);
+            Me.GameState = gameState;
             Me.SyncPos(new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ));
         }
         else
@@ -53,6 +54,7 @@ public class ObjectManager
             PlayerController pc = go.GetOrAddComponent<PlayerController>();
             pc.Speed = info.Speed;
             pc.Info = info;
+            pc.GameState = gameState;
             pc.SyncPos(new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ));
         }
     }
@@ -83,5 +85,11 @@ public class ObjectManager
 
         _objects.Remove(objectId);
         Managers.Resource.Destroy(go);
+    }
+
+    public void Clear()
+    {
+        _objects.Clear();
+        _objects.Clear();
     }
 }
