@@ -11,6 +11,7 @@ public class LobbyScene : BaseScene
         base.Init();
 
         SceneType = GameState.Lobby;
+        Managers.UI.ShowSceneUI<UI_LobbyScene>();
     }
 
     void Start()
