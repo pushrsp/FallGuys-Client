@@ -152,10 +152,12 @@ public class PacketHandler
         if (!makeRoomPacket.Success)
             return;
 
+        Managers.Room.Clear();
+        Managers.Room.EnteredRoom.MergeFrom(makeRoomPacket.Room);
+
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();
 
-        Managers.Room.Clear(makeRoomPacket.RoomIdx);
         Managers.Scene.LoadScene(GameState.Lobby);
     }
 
@@ -178,20 +180,17 @@ public class PacketHandler
 
         foreach (PlayerInfo player in spawnInRoomPacket.Players)
             Managers.Object.Add(player, GameState.Lobby);
+
+        UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
+        lobby.SetUserList();
     }
 
     public static void S_ChangeRoomHandler(PacketSession session, IMessage packet)
     {
         S_ChangeRoom spawnInRoomPacket = packet as S_ChangeRoom;
 
-        Debug.Log($"S_ChangeRoomHandler: {spawnInRoomPacket.Room.Idx}");
         Managers.Room.Rooms[spawnInRoomPacket.Room.Idx].MergeFrom(spawnInRoomPacket.Room);
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();
-    }
-
-    public static void S_ChangePlayerHandler(PacketSession session, IMessage packet)
-    {
-        S_ChangePlayer changePlayerPacket = packet as S_ChangePlayer;
     }
 }

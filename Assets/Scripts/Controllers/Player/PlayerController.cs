@@ -9,7 +9,6 @@ using UnityEngine;
 public class PlayerController : BaseController
 {
     private PlayerInfo _playerInfo = new PlayerInfo {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
-
     public GameState GameState { get; set; }
 
     public PlayerInfo Info

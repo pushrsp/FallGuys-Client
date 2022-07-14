@@ -43,7 +43,7 @@ public class UI_RoomScene : UI_Scene
 
     public void SetUI()
     {
-        if (Managers.Room.Rooms.Count == 0 || Managers.Room.EnterRoomIdx != -1)
+        if (Managers.Room.Rooms.Count == 0 || Managers.Room.EnteredRoom == null)
             return;
 
         foreach (Transform child in _grid.transform)

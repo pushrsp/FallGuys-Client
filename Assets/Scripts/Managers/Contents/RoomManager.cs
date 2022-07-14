@@ -6,7 +6,7 @@ using UnityEngine;
 public class RoomManager
 {
     public List<RoomInfo> Rooms { get; } = new List<RoomInfo>();
-    public int EnterRoomIdx = -1;
+    public RoomInfo EnteredRoom { get; set; } = new RoomInfo();
 
     public void Add(RoomInfo info)
     {
@@ -14,9 +14,8 @@ public class RoomManager
         Rooms.Sort((a, b) => a.Idx - b.Idx);
     }
 
-    public void Clear(int idx)
+    public void Clear()
     {
         Rooms.Clear();
-        EnterRoomIdx = idx;
     }
 }

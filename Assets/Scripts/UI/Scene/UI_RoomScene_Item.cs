@@ -60,7 +60,8 @@ public class UI_RoomScene_Item : UI_Base
 
     private void OnClickEnter(PointerEventData evt)
     {
-        Managers.Room.Clear(Idx);
+        Managers.Room.Clear();
+        Managers.Room.EnteredRoom.MergeFrom(Info);
         Managers.Scene.LoadScene(GameState.Lobby);
     }
 

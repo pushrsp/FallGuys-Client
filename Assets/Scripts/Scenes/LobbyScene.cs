@@ -17,7 +17,7 @@ public class LobbyScene : BaseScene
     void Start()
     {
         C_EnterRoom enterRoomPacket = new C_EnterRoom();
-        enterRoomPacket.RoomIdx = Managers.Room.EnterRoomIdx;
+        enterRoomPacket.RoomIdx = Managers.Room.EnteredRoom.Idx;
 
         Managers.Network.Send(enterRoomPacket);
     }

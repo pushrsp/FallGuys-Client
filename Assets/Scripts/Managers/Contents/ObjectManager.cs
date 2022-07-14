@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Google.Protobuf.Protocol;
 using UnityEngine;
 
@@ -32,6 +33,11 @@ public class ObjectManager
                 _obstacles.Add(pc.ObstacleId, go);
                 break;
         }
+    }
+
+    public List<GameObject> GetAll()
+    {
+        return _objects.Values.ToList();
     }
 
     public void Add(PlayerInfo info, GameState gameState, bool me = false)
