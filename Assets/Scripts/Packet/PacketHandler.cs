@@ -32,7 +32,7 @@ public class PacketHandler
     {
         S_Despawn despawn = packet as S_Despawn;
 
-        foreach (string objectId in despawn.PlayerId)
+        foreach (string objectId in despawn.ObjectId)
             Managers.Object.Remove(objectId);
     }
 
@@ -164,6 +164,7 @@ public class PacketHandler
         S_AddRoom makeRoomPacket = packet as S_AddRoom;
         Managers.Room.Add(makeRoomPacket.Room);
 
+        //TODO: 에러 State 가 Room일 때만
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();
     }
@@ -187,5 +188,10 @@ public class PacketHandler
         Managers.Room.Rooms[spawnInRoomPacket.Room.Idx].MergeFrom(spawnInRoomPacket.Room);
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();
+    }
+
+    public static void S_ChangePlayerHandler(PacketSession session, IMessage packet)
+    {
+        S_ChangePlayer changePlayerPacket = packet as S_ChangePlayer;
     }
 }

@@ -12,7 +12,8 @@ public class UI_LobbyScene : UI_Scene
 
     enum Images
     {
-        PlayerSelectBtn
+        PlayerSelectBtn,
+        StartBtn
     }
 
     protected override void Init()
@@ -21,12 +22,13 @@ public class UI_LobbyScene : UI_Scene
 
         PlayerSelectUI = GetComponentInChildren<UI_LobbyScene_PlayerSelect>();
         PlayerSelectUI.gameObject.SetActive(false);
-        
-        Bind<Image>(typeof(Images));
-        
-        _canvasCamera =GameObject.Find("Canvas Camera").GetComponent<Camera>();
 
-        GetImage((int)Images.PlayerSelectBtn).gameObject.BindEvent(OnClickPlayerSelect);
+        Bind<Image>(typeof(Images));
+
+        _canvasCamera = GameObject.Find("Canvas Camera").GetComponent<Camera>();
+
+        GetImage((int) Images.PlayerSelectBtn).gameObject.BindEvent(OnClickPlayerSelect);
+        GetImage((int) Images.StartBtn).gameObject.BindEvent(OnClickStart);
     }
 
     private void OnClickPlayerSelect(PointerEventData evt)
@@ -35,5 +37,10 @@ public class UI_LobbyScene : UI_Scene
         Canvas canvas = GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
         canvas.worldCamera = _canvasCamera;
+    }
+
+    private void OnClickStart(PointerEventData evt)
+    {
+        Debug.Log("OnClickStart");
     }
 }
