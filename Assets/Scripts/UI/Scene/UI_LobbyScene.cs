@@ -48,7 +48,8 @@ public class UI_LobbyScene : UI_Scene
 
     private void OnClickStart(PointerEventData evt)
     {
-        Debug.Log("OnClickStart");
+        if (Managers.Room.EnteredRoom.OwnerId == Managers.Object.Me.ObjectId)
+            Debug.Log("OnClickStart");
     }
 
     public void SetUserList()

@@ -9,7 +9,18 @@ using UnityEngine;
 public class PlayerController : BaseController
 {
     private PlayerInfo _playerInfo = new PlayerInfo {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
-    public GameState GameState { get; set; }
+
+    public GameState GameState
+    {
+        get { return Info.GameState; }
+        set { Info.GameState = value; }
+    }
+
+    public override float Speed
+    {
+        get { return Info.Speed; }
+        set { Info.Speed = value; }
+    }
 
     public PlayerInfo Info
     {

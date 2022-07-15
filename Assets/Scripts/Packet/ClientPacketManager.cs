@@ -23,8 +23,8 @@ class PacketManager
 		
 	public void Register()
 	{		
-		_onRecv.Add((ushort)MsgId.SEnterGame, MakePacket<S_EnterGame>);
-		_handler.Add((ushort)MsgId.SEnterGame, PacketHandler.S_EnterGameHandler);		
+		_onRecv.Add((ushort)MsgId.SEnterRoom, MakePacket<S_EnterRoom>);
+		_handler.Add((ushort)MsgId.SEnterRoom, PacketHandler.S_EnterRoomHandler);		
 		_onRecv.Add((ushort)MsgId.SLeaveGame, MakePacket<S_LeaveGame>);
 		_handler.Add((ushort)MsgId.SLeaveGame, PacketHandler.S_LeaveGameHandler);		
 		_onRecv.Add((ushort)MsgId.SSpawn, MakePacket<S_Spawn>);
@@ -53,8 +53,6 @@ class PacketManager
 		_handler.Add((ushort)MsgId.SMakeRoomOk, PacketHandler.S_MakeRoomOkHandler);		
 		_onRecv.Add((ushort)MsgId.SAddRoom, MakePacket<S_AddRoom>);
 		_handler.Add((ushort)MsgId.SAddRoom, PacketHandler.S_AddRoomHandler);		
-		_onRecv.Add((ushort)MsgId.SSpawnInRoom, MakePacket<S_SpawnInRoom>);
-		_handler.Add((ushort)MsgId.SSpawnInRoom, PacketHandler.S_SpawnInRoomHandler);		
 		_onRecv.Add((ushort)MsgId.SChangeRoom, MakePacket<S_ChangeRoom>);
 		_handler.Add((ushort)MsgId.SChangeRoom, PacketHandler.S_ChangeRoomHandler);
 	}

@@ -8,16 +8,18 @@ using UnityEngine.UIElements;
 
 public class PacketHandler
 {
-    public static void S_EnterGameHandler(PacketSession session, IMessage packet)
+    public static void S_EnterRoomHandler(PacketSession session, IMessage packet)
     {
-        S_EnterGame enterPacket = packet as S_EnterGame;
+        S_EnterRoom enterPacket = packet as S_EnterRoom;
 
-        Managers.Object.Add(enterPacket.Player, GameState.Game, true);
+        Managers.Object.Add(enterPacket.Player, true);
+
+        UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
+        lobby.SetUserList();
     }
 
     public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
     {
-        S_EnterGame enterPacket = packet as S_EnterGame;
     }
 
     public static void S_SpawnHandler(PacketSession session, IMessage packet)
@@ -25,7 +27,10 @@ public class PacketHandler
         S_Spawn spawnPacket = packet as S_Spawn;
 
         foreach (PlayerInfo p in spawnPacket.Players)
-            Managers.Object.Add(p, GameState.Game);
+            Managers.Object.Add(p, Managers.Object.Me.ObjectId == p.ObjectId);
+
+        UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
+        lobby.SetUserList();
     }
 
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
@@ -171,25 +176,11 @@ public class PacketHandler
         roomScene.SetUI();
     }
 
-    public static void S_SpawnInRoomHandler(PacketSession session, IMessage packet)
-    {
-        S_SpawnInRoom spawnInRoomPacket = packet as S_SpawnInRoom;
-
-        if (spawnInRoomPacket.Me != null)
-            Managers.Object.Add(spawnInRoomPacket.Me, GameState.Lobby, true);
-
-        foreach (PlayerInfo player in spawnInRoomPacket.Players)
-            Managers.Object.Add(player, GameState.Lobby);
-
-        UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
-        lobby.SetUserList();
-    }
-
     public static void S_ChangeRoomHandler(PacketSession session, IMessage packet)
     {
-        S_ChangeRoom spawnInRoomPacket = packet as S_ChangeRoom;
+        S_ChangeRoom changeRoomPacket = packet as S_ChangeRoom;
 
-        Managers.Room.Rooms[spawnInRoomPacket.Room.Idx].MergeFrom(spawnInRoomPacket.Room);
+        Managers.Room.Rooms[changeRoomPacket.Room.Idx].MergeFrom(changeRoomPacket.Room);
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();
     }

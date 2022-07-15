@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class BaseController : MonoBehaviour
 {
-    public float Speed { get; set; }
+    public virtual float Speed { get; set; }
 }
