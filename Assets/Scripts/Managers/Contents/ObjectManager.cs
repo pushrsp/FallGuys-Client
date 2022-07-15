@@ -10,8 +10,9 @@ public class ObjectManager
     public string Id { get; set; }
     public string Username { get; set; }
     public MyPlayerController Me { get; set; }
+    public int StageId { get; set; }
 
-    public Dictionary<string, GameObject> _objects = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> _objects = new Dictionary<string, GameObject>();
     private Dictionary<int, GameObject> _obstacles = new Dictionary<int, GameObject>();
 
     public void Add(int obstacleId, ObstacleType type)
@@ -92,6 +93,6 @@ public class ObjectManager
     public void Clear()
     {
         _objects.Clear();
-        _objects.Clear();
+        _obstacles.Clear();
     }
 }

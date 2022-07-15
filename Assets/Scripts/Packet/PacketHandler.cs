@@ -184,4 +184,13 @@ public class PacketHandler
         UI_RoomScene roomScene = Managers.UI.SceneUI as UI_RoomScene;
         roomScene.SetUI();
     }
+
+    public static void S_StartGameHandler(PacketSession session, IMessage packet)
+    {
+        S_StartGame startGamePacket = packet as S_StartGame;
+
+        Managers.Object.StageId = startGamePacket.StageId;
+        Managers.Object.Clear();
+        Managers.Scene.LoadScene(GameState.Game);
+    }
 }

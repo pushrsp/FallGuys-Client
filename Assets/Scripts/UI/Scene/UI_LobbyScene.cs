@@ -48,12 +48,20 @@ public class UI_LobbyScene : UI_Scene
 
     private void OnClickStart(PointerEventData evt)
     {
-        if (Managers.Room.EnteredRoom.OwnerId == Managers.Object.Me.ObjectId)
-            Debug.Log("OnClickStart");
+        if (Managers.Room.EnteredRoom.OwnerId != Managers.Object.Me.ObjectId)
+            return;
+
+        C_StartGame startGamePacket = new C_StartGame();
+        startGamePacket.StageId = 1;
+
+        Managers.Network.Send(startGamePacket);
     }
 
     public void SetUserList()
     {
+        if (Managers.Scene.Scene != GameState.Lobby)
+            return;
+
         List<GameObject> users = Managers.Object.GetAll();
         if (users.Count == 0)
             return;
