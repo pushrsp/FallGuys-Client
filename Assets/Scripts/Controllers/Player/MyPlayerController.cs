@@ -54,6 +54,9 @@ public class MyPlayerController : PlayerController
 
     private void UpdateKeyboard()
     {
+        if (!CanMove)
+            return;
+
         Vector3 moveVec = Vector3.zero;
 
         if (Input.GetKey(KeyCode.UpArrow))

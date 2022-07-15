@@ -12,6 +12,7 @@ public class GameScene : BaseScene
 
         SceneType = GameState.Game;
 
+        Managers.UI.ShowSceneUI<UI_GameScene>();
         Managers.Map.LoadStage(Managers.Object.StageId);
 
         Screen.SetResolution(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2, false);

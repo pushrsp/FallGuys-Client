@@ -41,7 +41,7 @@ public class ObjectManager
         return _objects.Values.ToList();
     }
 
-    public void Add(PlayerInfo info, bool me = false)
+    public void Add(PlayerInfo info, bool canMove, bool me = false)
     {
         GameObject go = Managers.Resource.Instantiate($"Players/{info.PlayerSelect}");
         go.name = info.Username;
@@ -51,12 +51,14 @@ public class ObjectManager
         {
             go.tag = "Me";
             Me = go.GetOrAddComponent<MyPlayerController>();
+            Me.CanMove = canMove;
             Me.Info.MergeFrom(info);
             Me.SyncPos(new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ));
         }
         else
         {
             PlayerController pc = go.GetOrAddComponent<PlayerController>();
+            pc.CanMove = canMove;
             pc.Info.MergeFrom(info);
             pc.SyncPos(new Vector3(info.PosInfo.PosX, info.PosInfo.PosY, info.PosInfo.PosZ));
         }

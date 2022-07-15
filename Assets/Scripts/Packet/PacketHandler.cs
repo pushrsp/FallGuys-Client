@@ -12,10 +12,13 @@ public class PacketHandler
     {
         S_EnterRoom enterPacket = packet as S_EnterRoom;
 
-        Managers.Object.Add(enterPacket.Player, true);
+        Managers.Object.Add(enterPacket.Player, enterPacket.CanMove, true);
 
-        UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
-        lobby.SetUserList();
+        if (enterPacket.Player.GameState == GameState.Room)
+        {
+            UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
+            lobby.SetUserList();
+        }
     }
 
     public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
@@ -26,11 +29,14 @@ public class PacketHandler
     {
         S_Spawn spawnPacket = packet as S_Spawn;
 
-        foreach (PlayerInfo p in spawnPacket.Players)
-            Managers.Object.Add(p, Managers.Object.Me.ObjectId == p.ObjectId);
-
         UI_LobbyScene lobby = Managers.UI.SceneUI as UI_LobbyScene;
-        lobby.SetUserList();
+        foreach (PlayerInfo p in spawnPacket.Players)
+        {
+            Managers.Object.Add(p, true, Managers.Object.Me.ObjectId == p.ObjectId);
+
+            if (p.GameState != GameState.Game)
+                lobby.SetUserList();
+        }
     }
 
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
@@ -192,5 +198,24 @@ public class PacketHandler
         Managers.Object.StageId = startGamePacket.StageId;
         Managers.Object.Clear();
         Managers.Scene.LoadScene(GameState.Game);
+    }
+
+    public static void S_StartCountDownHandler(PacketSession session, IMessage packet)
+    {
+        S_StartCountDown startCountDownPacket = packet as S_StartCountDown;
+        UI_GameScene scene = Managers.UI.SceneUI as UI_GameScene;
+        string text = $"{startCountDownPacket.Counter - 1}";
+
+        if (startCountDownPacket.Counter == 1)
+        {
+            text = "GO";
+            Managers.Object.Me.CanMove = true;
+        }
+        else if (startCountDownPacket.Counter == 0)
+        {
+            text = "";
+        }
+
+        scene.SetText(text);
     }
 }

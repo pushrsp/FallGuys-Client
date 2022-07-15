@@ -10,6 +10,8 @@ public class PlayerController : BaseController
 {
     private PlayerInfo _playerInfo = new PlayerInfo {PosInfo = new PositionInfo(), MoveDir = new PositionInfo()};
 
+    public bool CanMove { get; set; } = false;
+
     public GameState GameState
     {
         get { return Info.GameState; }
