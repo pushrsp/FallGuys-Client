@@ -45,7 +45,7 @@ public class ObjectManager
     {
         GameObject go = Managers.Resource.Instantiate($"Players/{info.PlayerSelect}");
         go.name = info.Username;
-        _objects.Add(info.ObjectId, go);
+        _objects.TryAdd(info.ObjectId, go);
 
         if (me)
         {
@@ -94,6 +94,8 @@ public class ObjectManager
 
     public void Clear()
     {
+        foreach (GameObject gameObject in _objects.Values)
+            Managers.Resource.Destroy(gameObject);
         _objects.Clear();
         _obstacles.Clear();
     }

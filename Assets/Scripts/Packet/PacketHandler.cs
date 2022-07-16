@@ -218,4 +218,35 @@ public class PacketHandler
 
         scene.SetText(text);
     }
+
+    public static void S_ArriveHandler(PacketSession session, IMessage packet)
+    {
+        S_Arrive arrivePacket = packet as S_Arrive;
+
+        GameObject go = Managers.Object.FindById(arrivePacket.ObjectId);
+        if (go == null)
+            return;
+
+        PlayerController pc = go.GetComponent<PlayerController>();
+        pc.CanMove = false;
+        pc.State = PlayerState.Idle;
+
+        UI_GameScene scene = Managers.UI.SceneUI as UI_GameScene;
+        scene.SetArrive(pc.Username);
+    }
+
+    public static void S_EndCountDownHandler(PacketSession session, IMessage packet)
+    {
+        S_EndCountDown endCountDownPacket = packet as S_EndCountDown;
+        UI_GameScene scene = Managers.UI.SceneUI as UI_GameScene;
+        string text = $"{endCountDownPacket.Counter - 1}";
+
+        if (endCountDownPacket.Counter > 1)
+            scene.SetText(text);
+        else
+        {
+            Managers.Object.Clear();
+            Managers.Scene.LoadScene(GameState.Lobby);
+        }
+    }
 }

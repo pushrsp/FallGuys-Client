@@ -64,7 +64,7 @@ public class MapManager
             case '0':
                 return true;
             case '3':
-                return false;
+                return true;
             case '4':
                 return false;
             case '5':

@@ -109,6 +109,9 @@ public class MyPlayerController : PlayerController
 
     protected override void UpdateMoving()
     {
+        if (!CanMove)
+            return;
+
         if (Physics.Raycast(transform.position + Vector3.up, MoveDir, 1.2f, LayerMask.GetMask("Player")))
             return;
 
